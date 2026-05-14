@@ -12,6 +12,48 @@ from reportlab.lib.styles import getSampleStyleSheet
 st.set_page_config(page_title="EnerVision AI Dashboard")
 
 st.title("⚡ EnerVision AI Dashboard Mai 2026")
+
+##add Tap
+tab1, tab2 = st.tabs(["📊 Realtime Dashboard", "📁 Upload & AI Analysis"])
+
+with tab1:
+    st.subheader("Realtime Energy Monitoring")
+    # code dashboard เดิมทั้งหมดไว้ตรงนี้
+
+with tab2:
+    st.subheader("📁 Upload & AI Analysis")
+
+    uploaded_file = st.file_uploader(
+        "Upload energy data file",
+        type=["csv"]
+    )
+
+    if uploaded_file is not None:
+        upload_df = pd.read_csv(uploaded_file)
+
+        st.success("File uploaded successfully")
+        st.dataframe(upload_df)
+
+        peak_usage = upload_df["power_usage"].max()
+        avg_usage = upload_df["power_usage"].mean()
+        lowest_battery = upload_df["battery_level"].min()
+
+        st.metric("⚡ Peak Usage", f"{peak_usage:.2f} kW")
+        st.metric("📈 Average Usage", f"{avg_usage:.2f} kW")
+        st.metric("🔋 Lowest Battery", f"{lowest_battery}%")
+
+        st.subheader("AI Analysis Result")
+
+        if peak_usage > 7:
+            st.error("⚠️ High energy usage detected")
+            st.write("Recommendation: Reduce non-critical loads during peak hours.")
+        else:
+            st.success("✅ Energy usage is within normal range.")
+
+        if lowest_battery < 45:
+            st.warning("🔋 Battery level dropped below recommended threshold")
+            st.write("Recommendation: Improve battery charging schedule.")
+
 st_autorefresh(interval=3000, key="datarefresh")
 
 
