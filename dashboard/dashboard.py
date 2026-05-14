@@ -4,6 +4,10 @@ import pandas as pd
 from streamlit_autorefresh import st_autorefresh
 from sklearn.linear_model import LinearRegression
 import numpy as np
+##Report
+import streamlit as st
+from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
 
 st.set_page_config(page_title="EnerVision AI Dashboard")
 
@@ -115,3 +119,97 @@ st.line_chart(forecast)
 forecast_value = forecast[-1]
 
 st.info(f"Predicted Future Power Usage: {forecast_value:.2f} kW")
+
+##Report 
+st.subheader("📥 Export Energy Data")
+
+csv = df.to_csv(index=False).encode("utf-8")
+
+st.download_button(
+    label="Download Telemetry CSV",
+    data=csv,
+    file_name="energy_telemetry.csv",
+    mime="text/csv"
+)
+
+##Generate PDF Report
+
+def generate_pdf():
+
+    doc = SimpleDocTemplate("energy_report.pdf")
+
+    styles = getSampleStyleSheet()
+
+    elements = []
+
+    elements.append(
+        Paragraph("EnerVision AI Energy Report", styles['Title'])
+    )
+
+    elements.append(Spacer(1, 12))
+
+    elements.append(
+        Paragraph(
+            f"Latest Power Usage: {latest_power:.2f} kW",
+            styles['BodyText']
+        )
+    )
+
+    elements.append(
+        Paragraph(
+            f"Battery Level: {latest_battery}%",
+            styles['BodyText']
+        )
+    )
+
+    elements.append(
+        Paragraph(
+            f"Solar Output: {latest_solar:.2f} kW",
+            styles['BodyText']
+        )
+    )
+
+    elements.append(
+        Paragraph(
+            f"Estimated CO₂ Emission: {carbon_emission:.2f} kg CO₂",
+            styles['BodyText']
+        )
+    )
+
+    doc.build(elements)
+
+    ##Generate PDFpip3 install reportlab
+
+    st.subheader("📄 PDF Energy Report")
+
+if st.button("Generate PDF Report"):
+
+    generate_pdf()
+
+    with open("energy_report.pdf", "rb") as pdf_file:
+
+        st.download_button(
+            label="Download PDF Report",
+            data=pdf_file,
+            file_name="energy_report.pdf",
+            mime="application/pdf"
+        )
+
+##Automated Monthly Reports
+st.subheader("📅 Monthly Energy Summary")
+
+total_power = df["power_usage"].sum()
+
+average_power = df["power_usage"].mean()
+
+total_carbon = total_power * 0.4
+
+peak_usage = df["power_usage"].max()
+
+st.write(f"⚡ Total Energy Usage: {total_power:.2f} kW")
+
+st.write(f"📈 Average Power Usage: {average_power:.2f} kW")
+
+st.write(f"🔥 Peak Usage: {peak_usage:.2f} kW")
+
+st.write(f"🌍 Estimated Total CO₂: {total_carbon:.2f} kg CO₂")
