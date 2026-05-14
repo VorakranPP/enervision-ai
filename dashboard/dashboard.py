@@ -1,11 +1,12 @@
 import streamlit as st
 import sqlite3
 import pandas as pd
+from streamlit_autorefresh import st_autorefresh
 
 st.set_page_config(page_title="EnerVision AI Dashboard")
 
 st.title("⚡ EnerVision AI Dashboard Mai 2026")
-
+st_autorefresh(interval=3000, key="datarefresh")
 
 
 ##connection = sqlite3.connect("energy_data.db")
