@@ -2,6 +2,8 @@ import streamlit as st
 import sqlite3
 import pandas as pd
 from streamlit_autorefresh import st_autorefresh
+from sklearn.linear_model import LinearRegression
+import numpy as np
 
 st.set_page_config(page_title="EnerVision AI Dashboard")
 
@@ -42,6 +44,16 @@ col3.metric(
     f"{latest_solar:.2f} kW"
 )
 
+carbon_emission = latest_power * 0.4
+
+st.subheader("🌍 Carbon Emission Analytics")
+
+
+st.metric(
+    "Estimated CO₂ Emission",
+    f"{carbon_emission:.2f} kg CO₂"
+)
+
 st.subheader("AI Anomaly Detection")
 
 latest_power = df["power_usage"].iloc[0]
@@ -76,10 +88,30 @@ st.line_chart(df["battery_level"])
 
 st.subheader("Energy Usage Forecast")
 
-forecast_value = df["power_usage"].tail(5).mean()
+##forecast_value = df["power_usage"].tail(5).mean()
 
-forecast_data = [forecast_value] * 10
+##forecast_data = [forecast_value] * 10
 
-st.line_chart(forecast_data)
+##st.line_chart(forecast_data)
 
-st.info(f"Predicted Average Power Usage: {forecast_value:.2f} kW")
+##st.info(f"Predicted Average Power Usage: {forecast_value:.2f} kW")
+
+st.subheader("🔮 AI Energy Forecast")
+
+power_data = df["power_usage"].values[::-1]
+
+X = np.array(range(len(power_data))).reshape(-1, 1)
+y = power_data
+
+model = LinearRegression()
+model.fit(X, y)
+
+future_x = np.array(range(len(power_data), len(power_data) + 10)).reshape(-1, 1)
+
+forecast = model.predict(future_x)
+
+st.line_chart(forecast)
+
+forecast_value = forecast[-1]
+
+st.info(f"Predicted Future Power Usage: {forecast_value:.2f} kW")
