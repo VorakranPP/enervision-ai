@@ -1,3 +1,4 @@
+
 # ⚡ EnerVision AI
 
 AI-powered smart energy monitoring prototype for realtime telemetry, anomaly detection, forecasting, and sustainability analytics.
@@ -96,9 +97,8 @@ AI-powered smart energy monitoring prototype for realtime telemetry, anomaly det
                            │ Upload & AI Analysis │
                            │ CSV / Report Engine  │
                            └──────────────────────┘
-```
+````
 
----
 
 # 📦 Local Setup
 
@@ -137,6 +137,19 @@ docker build -t enervision-ai .
 docker run -p 8501:8501 enervision-ai
 ```
 
+# 🔌 FastAPI Backend
+
+## Run API
+
+```bash
+uvicorn backend.api:app --reload
+```
+http://127.0.0.1:8000/docs
+
+```bash
+git add .
+git commit -m "Add FastAPI backend"
+git push
 Open:
 
 ```text
@@ -149,27 +162,27 @@ http://localhost:8501
 
 The platform includes:
 
-- Threshold-based anomaly detection
-- Energy forecasting using Linear Regression
-- Carbon emission estimation
-- AI-generated operational recommendations
+* Threshold-based anomaly detection
+* Energy forecasting using Linear Regression
+* Carbon emission estimation
+* AI-generated operational recommendations
 
 ## Example Recommendations
 
-- Reduce HVAC usage during peak hours
-- Shift non-critical loads
-- Improve battery charging schedules
-- Optimize solar utilization
+* Reduce HVAC usage during peak hours
+* Shift non-critical loads
+* Improve battery charging schedules
+* Optimize solar utilization
 
 ---
 
 # 📈 Example Use Cases
 
-- Smart Building Monitoring
-- Renewable Energy Analytics
-- Energy Consumption Optimization
-- ESG & Sustainability Reporting
-- Operational Energy Insights
+* Smart Building Monitoring
+* Renewable Energy Analytics
+* Energy Consumption Optimization
+* ESG & Sustainability Reporting
+* Operational Energy Insights
 
 ---
 
@@ -177,23 +190,23 @@ The platform includes:
 
 EnerVision AI helps organizations:
 
-- Monitor realtime energy usage
-- Detect abnormal consumption patterns
-- Improve operational visibility
-- Support sustainability initiatives
-- Generate AI-driven recommendations
-- Analyze historical energy trends
+* Monitor realtime energy usage
+* Detect abnormal consumption patterns
+* Improve operational visibility
+* Support sustainability initiatives
+* Generate AI-driven recommendations
+* Analyze historical energy trends
 
 ---
 
 # 🔮 Future Roadmap
 
-- AWS IoT Core integration
-- Multi-site monitoring
-- Predictive maintenance
-- Advanced ML forecasting
-- Email alerting
-- Kubernetes deployment
+* AWS IoT Core integration
+* Multi-site monitoring
+* Predictive maintenance
+* Advanced ML forecasting
+* Email alerting
+* Kubernetes deployment
 
 ---
 
@@ -202,3 +215,4 @@ EnerVision AI helps organizations:
 Vorakran Trisilanun (PP)
 
 Built as a portfolio and learning project focused on AI, IoT, realtime analytics, and cloud-native energy systems.
+
