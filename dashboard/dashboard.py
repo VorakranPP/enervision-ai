@@ -29,8 +29,14 @@ with tab2:
     )
 
     if uploaded_file is not None:
-        upload_df = pd.read_csv(uploaded_file)
+        ##upload_df = pd.read_csv(uploaded_file)
 
+        upload_df = pd.read_csv(
+            uploaded_file,
+            sep=",",
+            on_bad_lines='skip'
+            )
+        
         st.success("File uploaded successfully")
         st.dataframe(upload_df)
 
