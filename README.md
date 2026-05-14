@@ -144,17 +144,31 @@ docker run -p 8501:8501 enervision-ai
 ```bash
 uvicorn backend.api:app --reload
 ```
+
+## API Documentation
+
+```text
 http://127.0.0.1:8000/docs
+```
+
+---
+
+# 📦 Git Workflow
 
 ```bash
 git add .
 git commit -m "Add FastAPI backend"
 git push
-Open:
+```
+
+---
+
+# 🌐 Dashboard
 
 ```text
 http://localhost:8501
 ```
+
 
 ---
 
