@@ -162,6 +162,32 @@ git push
 ```
 
 ---
+# 🔌 FastAPI Backend
+
+## Run API
+
+```bash
+uvicorn backend.api:app --reload
+```
+
+## API Documentation
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+## Available API Endpoints
+
+| Endpoint | Description |
+|---|---|
+| GET `/` | API root endpoint |
+| GET `/health` | System health check |
+| GET `/telemetry` | Latest telemetry data |
+| GET `/summary` | Energy analytics summary |
+| GET `/alerts` | Active system alerts |
+| GET `/recommendations` | AI operational recommendations |
+| GET `/system-status` | Overall system condition |
+| GET `/trend-analysis` | Historical energy trend analysis |
 
 # 🌐 Dashboard
 
