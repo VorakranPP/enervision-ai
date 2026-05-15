@@ -137,22 +137,6 @@ docker build -t enervision-ai .
 docker run -p 8501:8501 enervision-ai
 ```
 
-# 🔌 FastAPI Backend
-
-## Run API
-
-```bash
-uvicorn backend.api:app --reload
-```
-
-## API Documentation
-
-```text
-http://127.0.0.1:8000/docs
-```
-
----
-
 # 📦 Git Workflow
 
 ```bash
@@ -194,7 +178,6 @@ http://127.0.0.1:8000/docs
 ```text
 http://localhost:8501
 ```
-
 
 ---
 
