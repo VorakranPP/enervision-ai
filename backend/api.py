@@ -1,13 +1,48 @@
 from fastapi import FastAPI
 import sqlite3
 from pathlib import Path
+from fastapi import FastAPI, Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+##from fastapi import Depends, HTTPException
+##from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from jose import JWTError, jwt
+from datetime import datetime, timedelta
 
 app = FastAPI(title="EnerVision AI API")
 
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "energy_data.db"
+SECRET_KEY = "enervision-secret-key"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+fake_user = {
+    "username": "admin",
+    "password": "admin123"
+}
+
+def create_access_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
+def verify_token(token: str = Depends(oauth2_scheme)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username = payload.get("sub")
+
+        if username is None:
+            raise HTTPException(status_code=401, detail="Invalid token")
+
+        return username
+
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
 @app.get("/")
 def read_root():
     return {
@@ -22,6 +57,26 @@ def health_check():
         "service": "EnerVision AI API"
     }
 
+@app.post("/token")
+def login(form_data: OAuth2PasswordRequestForm = Depends()):
+
+    if (
+        form_data.username != fake_user["username"]
+        or form_data.password != fake_user["password"]
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="Incorrect username or password"
+        )
+
+    access_token = create_access_token(
+        data={"sub": form_data.username}
+    )
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
 
 @app.get("/telemetry")
 def get_telemetry():
@@ -42,8 +97,10 @@ def get_telemetry():
     return [dict(row) for row in rows]
 
 
+##@app.get("/summary")
+##def get_summary():
 @app.get("/summary")
-def get_summary():
+def get_summary(current_user: str = Depends(verify_token)):
     connection = sqlite3.connect(DB_PATH)
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
@@ -79,7 +136,7 @@ def get_summary():
     }
 
 @app.get("/alerts")
-def get_alerts():
+def get_alerts(current_user: str = Depends(verify_token)):
     connection = sqlite3.connect(DB_PATH)
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
@@ -125,7 +182,7 @@ def get_alerts():
     }
 
 @app.get("/recommendations")
-def get_recommendations():
+def get_recommendations(current_user: str = Depends(verify_token)):
 
     recommendations = []
 
@@ -168,7 +225,7 @@ def get_recommendations():
     }
 
 @app.get("/system-status")
-def get_system_status():
+def get_system_status(current_user: str = Depends(verify_token)):
 
     connection = sqlite3.connect(DB_PATH)
     connection.row_factory = sqlite3.Row
@@ -209,7 +266,7 @@ def get_system_status():
     }
 
 @app.get("/trend-analysis")
-def trend_analysis():
+def trend_analysis(current_user: str = Depends(verify_token)):
 
     connection = sqlite3.connect(DB_PATH)
     connection.row_factory = sqlite3.Row
