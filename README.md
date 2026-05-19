@@ -239,3 +239,112 @@ Vorakran Trisilanun (PP)
 
 Built as a portfolio and learning project focused on AI, IoT, realtime analytics, and cloud-native energy systems.
 
+# 🔐 Authentication & User Management
+
+EnerVision AI includes JWT-based authentication with SQLite user storage and bcrypt password hashing.
+
+## Features
+
+- User registration (`POST /register`)
+- User login (`POST /token`)
+- JWT access tokens
+- Protected API endpoints
+- Password hashing using bcrypt
+- SQLite user management
+
+---
+
+## Authentication Flow
+
+```text
+Register User
+      ↓
+Store User in SQLite
+      ↓
+Hash Password (bcrypt)
+      ↓
+Login
+      ↓
+Generate JWT Token
+      ↓
+Access Protected APIs
+```
+
+---
+
+## Register New User
+
+Endpoint:
+
+```text
+POST /register
+```
+
+Example:
+
+```text
+username: Pumpuyz
+password: 123456
+```
+
+Response:
+
+```json
+{
+    "message":
+    "User Pumpuyz created successfully"
+}
+```
+
+---
+
+## Login
+
+Endpoint:
+
+```text
+POST /token
+```
+
+Example:
+
+```text
+username: admin
+password: admin123
+```
+
+Response:
+
+```json
+{
+    "access_token": "...",
+    "token_type": "bearer"
+}
+```
+
+---
+
+## Protected Endpoints
+
+| Endpoint | Authentication |
+|----------|----------------|
+| GET `/summary` | 🔒 Required |
+| GET `/alerts` | 🔒 Required |
+| GET `/recommendations` | 🔒 Required |
+| GET `/system-status` | 🔒 Required |
+| GET `/trend-analysis` | 🔒 Required |
+
+---
+
+# 🔌 API Endpoints
+
+| Endpoint | Description |
+|---|---|
+| POST `/register` | Register new user |
+| POST `/token` | Login and generate JWT |
+| GET `/telemetry` | Get latest telemetry |
+| GET `/summary` | Analytics summary |
+| GET `/alerts` | Alert detection |
+| GET `/recommendations` | AI recommendations |
+| GET `/system-status` | Overall status |
+| GET `/trend-analysis` | Historical trends |

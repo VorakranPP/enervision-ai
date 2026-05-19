@@ -7,6 +7,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 ##from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
+from passlib.context import CryptContext
 
 app = FastAPI(title="EnerVision AI API")
 
@@ -16,12 +17,13 @@ SECRET_KEY = "enervision-secret-key"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+##oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
 
-fake_user = {
-    "username": "admin",
-    "password": "admin123"
-}
+pwd_context = CryptContext(
+    schemes=["bcrypt"],
+    deprecated="auto"
+)
 
 def create_access_token(data: dict):
     to_encode = data.copy()
@@ -42,35 +44,93 @@ def verify_token(token: str = Depends(oauth2_scheme)):
 
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
-    
-@app.get("/")
-def read_root():
-    return {
-        "message": "EnerVision AI API is running"
-    }
 
 
-@app.get("/health")
-def health_check():
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+
+
+def get_user_from_db(username: str):
+    connection = sqlite3.connect(DB_PATH)
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM users
+        WHERE username = ?
+    """, (username,))
+
+    user = cursor.fetchone()
+    connection.close()
+
+    return user
+
+def create_user(username, password):
+
+    connection = sqlite3.connect(DB_PATH)
+    cursor = connection.cursor()
+
+    hashed_password = pwd_context.hash(password)
+
+    cursor.execute("""
+        INSERT INTO users (
+            username,
+            hashed_password
+        )
+        VALUES (?,?)
+    """, (
+        username,
+        hashed_password
+    ))
+
+    connection.commit()
+    connection.close()
+
+@app.post("/register")
+def register(
+    username: str,
+    password: str
+):
+
+    existing_user = get_user_from_db(username)
+
+    if existing_user:
+        raise HTTPException(
+            status_code=400,
+            detail="Username already exists"
+        )
+
+    create_user(
+        username,
+        password
+    )
+
     return {
-        "status": "healthy",
-        "service": "EnerVision AI API"
+        "message":
+        f"User {username} created successfully"
     }
+
 
 @app.post("/token")
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
-    if (
-        form_data.username != fake_user["username"]
-        or form_data.password != fake_user["password"]
-    ):
+    user = get_user_from_db(form_data.username)
+
+    if user is None:
+        raise HTTPException(
+            status_code=401,
+            detail="Incorrect username or password"
+        )
+
+    if not verify_password(form_data.password, user["hashed_password"]):
         raise HTTPException(
             status_code=401,
             detail="Incorrect username or password"
         )
 
     access_token = create_access_token(
-        data={"sub": form_data.username}
+        data={"sub": user["username"]}
     )
 
     return {
