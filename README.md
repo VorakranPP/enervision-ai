@@ -32,10 +32,12 @@ AI-powered smart energy monitoring prototype for realtime telemetry, anomaly det
 | Backend | Python |
 | Messaging | MQTT |
 | Database | SQLite |
+| Authentication | JWT + bcrypt |
 | AI / ML | scikit-learn |
 | Data Processing | Pandas / NumPy |
 | Reporting | ReportLab |
 | Deployment | Docker |
+
 
 ---
 
@@ -62,47 +64,43 @@ AI-powered smart energy monitoring prototype for realtime telemetry, anomaly det
 # 🏗️ Architecture Diagram
 
 ```text
-                           ┌──────────────────────┐
-                           │   Energy Simulator   │
-                           │  (Fake IoT Sensors)  │
-                           └──────────┬───────────┘
-                                      │
-                                      │ MQTT Telemetry
-                                      ▼
-                           ┌──────────────────────┐
-                           │     MQTT Broker      │
-                           │     HiveMQ / IoT     │
-                           └──────────┬───────────┘
-                                      │
-                                      │ Streamed Messages
-                                      ▼
-                           ┌──────────────────────┐
-                           │  Backend Subscriber  │
-                           │   Python + MQTT      │
-                           └──────────┬───────────┘
-                                      │
-                                      │ Store Telemetry
-                                      ▼
-                           ┌──────────────────────┐
-                           │     SQLite DB        │
-                           │  Historical Storage  │
-                           └──────────┬───────────┘
-                                      │
-                    ┌─────────────────┴─────────────────┐
-                    │                                   │
-                    ▼                                   ▼
-        ┌──────────────────────┐          ┌────────────────────────┐
-        │  Realtime Dashboard  │          │     AI Analytics       │
-        │      Streamlit       │          │ Anomaly + Forecasting  │
-        └──────────────────────┘          └────────────────────────┘
-                    │                                   │
-                    └─────────────────┬─────────────────┘
-                                      ▼
-                           ┌──────────────────────┐
-                           │ Upload & AI Analysis │
-                           │ CSV / Report Engine  │
-                           └──────────────────────┘
-````
+                    ┌──────────────────────┐
+                    │     User / Client    │
+                    └──────────┬───────────┘
+                               │
+                               │ Login / JWT
+                               ▼
+                    ┌──────────────────────┐
+                    │ Authentication Layer │
+                    │ JWT + bcrypt + Users │
+                    └──────────┬───────────┘
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │     FastAPI API      │
+                    │ Protected Endpoints  │
+                    └──────────┬───────────┘
+                               │
+         ┌─────────────────────┴─────────────────────┐
+         │                                           │
+         ▼                                           ▼
+┌──────────────────────┐                ┌──────────────────────┐
+│      SQLite DB       │                │   MQTT Telemetry     │
+│ Users + Energy Data  │                │  Energy Simulator    │
+└──────────┬───────────┘                └──────────┬───────────┘
+           │                                       │
+           └─────────────────┬─────────────────────┘
+                             ▼
+                  ┌─────────────────────────┐
+                  │ AI Analytics Engine     │
+                  │ Alerts + Forecasting    │
+                  └──────────┬──────────────┘
+                             ▼
+                  ┌─────────────────────────┐
+                  │ Streamlit Dashboard     │
+                  │ Monitoring & Reports    │
+                  └─────────────────────────┘
+```
 
 
 # 📦 Local Setup
@@ -170,6 +168,8 @@ http://127.0.0.1:8000/docs
 | Endpoint | Description |
 |---|---|
 | GET `/` | API root endpoint |
+| POST `/register` | Register new user |
+| POST `/token` | Login & generate JWT |
 | GET `/health` | System health check |
 | GET `/telemetry` | Latest telemetry data |
 | GET `/summary` | Energy analytics summary |
@@ -254,6 +254,7 @@ JWT token
 Protected APIs
 ```
 
+
 ## Protected Endpoints
 
 | Endpoint | Authentication |
@@ -286,6 +287,9 @@ Protected APIs
 - [ ] Email alerting
 - [ ] Kubernetes deployment
 - [ ] Grafana integration
+- [ ] User profile management
+- [ ] Password reset
+- [ ] Multi-user roles
 
 # 👨‍💻 Author
 
