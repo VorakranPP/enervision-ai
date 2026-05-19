@@ -295,7 +295,7 @@ Protected APIs
 
 **Vorakran Trisilanun (PP)**
 
-IT Manager | Cloud & Infrastructure Enthusiast | AI & IoT Learner
+Netzwerkingenieurin | Cloud & Infrastructure Enthusiast | AI & IoT Learner
 
 Built as a portfolio project focused on:
 
