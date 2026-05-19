@@ -17,7 +17,8 @@ cursor.execute("""
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE,
-    hashed_password TEXT
+    hashed_password TEXT,
+    role TEXT DEFAULT 'viewer'
 )
 """)
 
@@ -26,16 +27,19 @@ hashed_password = pwd_context.hash("admin123")
 cursor.execute("""
 INSERT OR IGNORE INTO users (
     username,
-    hashed_password
+    hashed_password,
+    role
 )
-VALUES (?,?)
+VALUES (?,?,?)
 """, (
-    "admin",
-    hashed_password
+(
+"admin",
+hashed_password,
+"admin"
+)
 ))
 
 connection.commit()
 connection.close()
 
 print("User created")
-

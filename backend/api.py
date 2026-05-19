@@ -45,6 +45,17 @@ def verify_token(token: str = Depends(oauth2_scheme)):
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
+def require_admin(current_user: str = Depends(verify_token)):
+
+    user = get_user_from_db(current_user)
+
+    if user["role"] != "admin":
+        raise HTTPException(
+            status_code=403,
+            detail="Admin access required"
+        )
+
+    return current_user
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
@@ -66,7 +77,11 @@ def get_user_from_db(username: str):
 
     return user
 
-def create_user(username, password):
+def create_user(
+    username,
+    password,
+    role="viewer"
+):
 
     connection = sqlite3.connect(DB_PATH)
     cursor = connection.cursor()
@@ -76,12 +91,14 @@ def create_user(username, password):
     cursor.execute("""
         INSERT INTO users (
             username,
-            hashed_password
+            hashed_password,
+            role
         )
-        VALUES (?,?)
+        VALUES (?,?,?)
     """, (
         username,
-        hashed_password
+        hashed_password,
+        role
     ))
 
     connection.commit()
@@ -90,7 +107,9 @@ def create_user(username, password):
 @app.post("/register")
 def register(
     username: str,
-    password: str
+    password: str,
+    role: str = "viewer",
+    current_user: str = Depends(require_admin)
 ):
 
     existing_user = get_user_from_db(username)
@@ -103,14 +122,15 @@ def register(
 
     create_user(
         username,
-        password
+        password,
+        role
     )
 
     return {
-        "message":
-        f"User {username} created successfully"
+        "message": f"User {username} created successfully",
+        "role": role,
+        "created_by": current_user
     }
-
 
 @app.post("/token")
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
@@ -157,8 +177,6 @@ def get_telemetry():
     return [dict(row) for row in rows]
 
 
-##@app.get("/summary")
-##def get_summary():
 @app.get("/summary")
 def get_summary(current_user: str = Depends(verify_token)):
     connection = sqlite3.connect(DB_PATH)

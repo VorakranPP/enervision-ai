@@ -21,6 +21,8 @@ AI-powered smart energy monitoring prototype for realtime telemetry, anomaly det
 - SQLite user management
 - Password hashing with bcrypt
 - Protected API endpoints
+- Role-based access control (RBAC)
+- Admin and viewer roles
 
 ---
 
@@ -37,7 +39,6 @@ AI-powered smart energy monitoring prototype for realtime telemetry, anomaly det
 | Data Processing | Pandas / NumPy |
 | Reporting | ReportLab |
 | Deployment | Docker |
-
 
 ---
 
@@ -236,24 +237,33 @@ EnerVision AI includes:
 - JWT authentication
 - bcrypt password hashing
 - SQLite user storage
+- Role-based access control (RBAC)
 - Protected APIs
 
 ## Authentication Flow
 
 ```text
-Register
+Register User
 ↓
-SQLite
+Store User in SQLite
 ↓
-bcrypt hash
+Hash Password (bcrypt)
 ↓
 Login
 ↓
-JWT token
+Generate JWT Token
 ↓
-Protected APIs
+Role Verification (admin / viewer)
+↓
+Access Protected APIs
 ```
 
+## Roles
+
+| Role | Permissions |
+|---|---|
+| admin | Create users, access protected APIs |
+| viewer | Read-only access |
 
 ## Protected Endpoints
 
@@ -264,19 +274,19 @@ Protected APIs
 | GET `/recommendations` | 🔒 Required |
 | GET `/system-status` | 🔒 Required |
 | GET `/trend-analysis` | 🔒 Required |
+| POST `/register` | 🔒 Admin only |
 
 ## Public Endpoints
 
 | Endpoint | Description |
 |---|---|
-| POST `/register` | Register user |
 | POST `/token` | Login |
 | GET `/telemetry` | Telemetry |
 | GET `/health` | Health check |
 
 # 🔮 Future Roadmap
 
-- [ ] Role-based access control (RBAC)
+- [x] Role-based access control (RBAC)
 - [ ] Refresh tokens
 - [ ] PostgreSQL migration
 - [ ] AWS IoT Core integration
@@ -290,6 +300,10 @@ Protected APIs
 - [ ] User profile management
 - [ ] Password reset
 - [ ] Multi-user roles
+- [ ] User profile management
+- [ ] Password reset
+- [ ] Multi-tenant access
+
 
 # 👨‍💻 Author
 
