@@ -16,6 +16,11 @@ AI-powered smart energy monitoring prototype for realtime telemetry, anomaly det
 - Upload & AI file analysis
 - CSV export and PDF reporting
 - Docker deployment support
+- JWT authentication
+- User registration & login
+- SQLite user management
+- Password hashing with bcrypt
+- Protected API endpoints
 
 ---
 
@@ -222,129 +227,76 @@ EnerVision AI helps organizations:
 
 ---
 
-# 🔮 Future Roadmap
-
-* AWS IoT Core integration
-* Multi-site monitoring
-* Predictive maintenance
-* Advanced ML forecasting
-* Email alerting
-* Kubernetes deployment
-
----
-
-# 👨‍💻 Author
-
-Vorakran Trisilanun (PP)
-
-Built as a portfolio and learning project focused on AI, IoT, realtime analytics, and cloud-native energy systems.
-
 # 🔐 Authentication & User Management
 
-EnerVision AI includes JWT-based authentication with SQLite user storage and bcrypt password hashing.
-
-## Features
+EnerVision AI includes:
 
 - User registration (`POST /register`)
 - User login (`POST /token`)
-- JWT access tokens
-- Protected API endpoints
-- Password hashing using bcrypt
-- SQLite user management
-
----
+- JWT authentication
+- bcrypt password hashing
+- SQLite user storage
+- Protected APIs
 
 ## Authentication Flow
 
 ```text
-Register User
-      ↓
-Store User in SQLite
-      ↓
-Hash Password (bcrypt)
-      ↓
+Register
+↓
+SQLite
+↓
+bcrypt hash
+↓
 Login
-      ↓
-Generate JWT Token
-      ↓
-Access Protected APIs
+↓
+JWT token
+↓
+Protected APIs
 ```
-
----
-
-## Register New User
-
-Endpoint:
-
-```text
-POST /register
-```
-
-Example:
-
-```text
-username: Pumpuyz
-password: 123456
-```
-
-Response:
-
-```json
-{
-    "message":
-    "User Pumpuyz created successfully"
-}
-```
-
----
-
-## Login
-
-Endpoint:
-
-```text
-POST /token
-```
-
-Example:
-
-```text
-username: admin
-password: admin123
-```
-
-Response:
-
-```json
-{
-    "access_token": "...",
-    "token_type": "bearer"
-}
-```
-
----
 
 ## Protected Endpoints
 
 | Endpoint | Authentication |
-|----------|----------------|
+|---|---|
 | GET `/summary` | 🔒 Required |
 | GET `/alerts` | 🔒 Required |
 | GET `/recommendations` | 🔒 Required |
 | GET `/system-status` | 🔒 Required |
 | GET `/trend-analysis` | 🔒 Required |
 
----
-
-# 🔌 API Endpoints
+## Public Endpoints
 
 | Endpoint | Description |
 |---|---|
-| POST `/register` | Register new user |
-| POST `/token` | Login and generate JWT |
-| GET `/telemetry` | Get latest telemetry |
-| GET `/summary` | Analytics summary |
-| GET `/alerts` | Alert detection |
-| GET `/recommendations` | AI recommendations |
-| GET `/system-status` | Overall status |
-| GET `/trend-analysis` | Historical trends |
+| POST `/register` | Register user |
+| POST `/token` | Login |
+| GET `/telemetry` | Telemetry |
+| GET `/health` | Health check |
+
+# 🔮 Future Roadmap
+
+- [ ] Role-based access control (RBAC)
+- [ ] Refresh tokens
+- [ ] PostgreSQL migration
+- [ ] AWS IoT Core integration
+- [ ] Cloud deployment (AWS)
+- [ ] Multi-site monitoring
+- [ ] Predictive maintenance
+- [ ] Advanced ML forecasting
+- [ ] Email alerting
+- [ ] Kubernetes deployment
+- [ ] Grafana integration
+
+# 👨‍💻 Author
+
+**Vorakran Trisilanun (PP)**
+
+IT Manager | Cloud & Infrastructure Enthusiast | AI & IoT Learner
+
+Built as a portfolio project focused on:
+
+- AI analytics
+- IoT systems
+- Secure backend architecture
+- Cloud-native applications
+- Smart energy monitoring
