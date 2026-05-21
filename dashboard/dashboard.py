@@ -2,13 +2,13 @@ import streamlit as st
 import sqlite3
 import pandas as pd
 import requests
-import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 from sklearn.linear_model import LinearRegression
 import numpy as np
-##Report
-from reportlab.platypus import SimpleDocTemplate, Paragraph
+
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
+
 
 st.set_page_config(page_title="EnerVision AI Dashboard")
 
@@ -17,18 +17,17 @@ if "token" not in st.session_state:
 
 if "username" not in st.session_state:
     st.session_state.username = None
-st.title("🔐 EnerVision dashboard Mai2026")
+
 if "role" not in st.session_state:
     st.session_state.role = None
 
-##Log in 
+
+# Login
 if st.session_state.token is None:
 
     st.title("🔐 EnerVision Login")
 
-    username = st.text_input(
-        "Username"
-    )
+    username = st.text_input("Username")
 
     password = st.text_input(
         "Password",
@@ -38,77 +37,262 @@ if st.session_state.token is None:
     if st.button("Login"):
 
         response = requests.post(
-
             "http://127.0.0.1:8000/token",
-
             data={
-                "username":
-                username,
-
-                "password":
-                password
+                "username": username,
+                "password": password
             }
         )
 
         if response.status_code == 200:
 
-            token = response.json()[
-                "access_token"
-            ]
+            token = response.json()["access_token"]
 
             st.session_state.token = token
-
             st.session_state.username = username
-
             st.session_state.role = "admin"
 
-            st.success(
-        "Login successful"
-    )
+            st.success("Login successful")
 
             st.rerun()
 
         else:
-
-            st.error(
-                "Invalid credentials"
-            )
-
+            st.error("Invalid credentials")
 
     st.stop()
 
-##Logout
 
+# Profile + Logout
 col1, col2 = st.columns([6, 2])
 
 with col1:
-   st.markdown(
-
-f"""
-👤 {st.session_state.username}
-|
-🔐 {st.session_state.role}
-"""
-
-)
+    st.markdown(
+        f"👤 {st.session_state.username} | 🔐 {st.session_state.role}"
+    )
 
 with col2:
-
     if st.button("Logout"):
-
         st.session_state.token = None
         st.session_state.username = None
+        st.session_state.role = None
         st.rerun()
-        
 
-##add Tap
-tab1, tab2 = st.tabs(["📊 Realtime Dashboard", "📁 Upload & AI Analysis"])
 
+st.title("🔐 EnerVision Dashboard May 2026")
+
+
+tab1, tab2, tab3 = st.tabs([
+    "📊 Realtime Dashboard",
+    "📁 Upload & AI Analysis",
+    "☀️ Solar ROI Calculator"
+])
+
+
+# =========================
+# TAB 1: Realtime Dashboard
+# =========================
 with tab1:
-    st.subheader("Realtime Energy Monitoring")
-    # code dashboard เดิมทั้งหมดไว้ตรงนี้
 
+    st.subheader("Realtime Energy Monitoring")
+
+    st_autorefresh(
+        interval=3000,
+        key="datarefresh"
+    )
+
+    connection = sqlite3.connect("backend/energy_data.db")
+
+    query = """
+    SELECT *
+    FROM telemetry
+    ORDER BY id DESC
+    LIMIT 20
+    """
+
+    df = pd.read_sql_query(query, connection)
+
+    if df.empty:
+        st.warning("No telemetry data found.")
+        connection.close()
+        st.stop()
+
+    latest_power = df["power_usage"].iloc[0]
+    latest_battery = df["battery_level"].iloc[0]
+    latest_solar = df["solar_output"].iloc[0]
+
+    col1, col2, col3 = st.columns(3)
+
+    col1.metric(
+        "⚡ Power Usage",
+        f"{latest_power:.2f} kW"
+    )
+
+    col2.metric(
+        "🔋 Battery Level",
+        f"{latest_battery}%"
+    )
+
+    col3.metric(
+        "☀️ Solar Output",
+        f"{latest_solar:.2f} kW"
+    )
+
+    carbon_emission = latest_power * 0.4
+
+    st.subheader("🌍 Carbon Emission Analytics")
+
+    st.metric(
+        "Estimated CO₂ Emission",
+        f"{carbon_emission:.2f} kg CO₂"
+    )
+
+    st.subheader("AI Anomaly Detection")
+
+    if latest_power > 7:
+        st.error(
+            f"⚠️ High Power Usage Detected: {latest_power} kW"
+        )
+
+    elif latest_battery < 45:
+        st.warning(
+            f"🔋 Low Battery Level: {latest_battery}%"
+        )
+
+    else:
+        st.success("✅ System Operating Normally")
+
+    st.subheader("📅 Monthly Energy Summary")
+
+    total_power = df["power_usage"].sum()
+    average_power = df["power_usage"].mean()
+    total_carbon = total_power * 0.4
+    peak_usage = df["power_usage"].max()
+
+    st.write(f"⚡ Total Energy Usage: {total_power:.2f} kW")
+    st.write(f"📈 Average Power Usage: {average_power:.2f} kW")
+    st.write(f"🔥 Peak Usage: {peak_usage:.2f} kW")
+    st.write(f"🌍 Estimated Total CO₂: {total_carbon:.2f} kg CO₂")
+
+
+    st.subheader("Realtime Energy Telemetry")
+
+    st.dataframe(df)
+
+    st.subheader("Power Usage Trend")
+    st.line_chart(df["power_usage"])
+
+    st.subheader("Solar Output Trend")
+    st.line_chart(df["solar_output"])
+
+    st.subheader("Battery Level Trend")
+    st.line_chart(df["battery_level"])
+
+    st.subheader("🔮 AI Energy Forecast")
+
+    power_data = df["power_usage"].values[::-1]
+
+    X = np.array(range(len(power_data))).reshape(-1, 1)
+    y = power_data
+
+    model = LinearRegression()
+    model.fit(X, y)
+
+    future_x = np.array(
+        range(len(power_data), len(power_data) + 10)
+    ).reshape(-1, 1)
+
+    forecast = model.predict(future_x)
+
+    st.line_chart(forecast)
+
+    forecast_value = forecast[-1]
+
+    st.info(
+        f"Predicted Future Power Usage: {forecast_value:.2f} kW"
+    )
+
+    st.subheader("📥 Export Energy Data")
+
+    csv = df.to_csv(index=False).encode("utf-8")
+
+    st.download_button(
+        label="Download Telemetry CSV",
+        data=csv,
+        file_name="energy_telemetry.csv",
+        mime="text/csv"
+    )
+
+    def generate_pdf():
+
+        doc = SimpleDocTemplate("energy_report.pdf")
+
+        styles = getSampleStyleSheet()
+
+        elements = []
+
+        elements.append(
+            Paragraph(
+                "EnerVision AI Energy Report",
+                styles["Title"]
+            )
+        )
+
+        elements.append(Spacer(1, 12))
+
+        elements.append(
+            Paragraph(
+                f"Latest Power Usage: {latest_power:.2f} kW",
+                styles["BodyText"]
+            )
+        )
+
+        elements.append(
+            Paragraph(
+                f"Battery Level: {latest_battery}%",
+                styles["BodyText"]
+            )
+        )
+
+        elements.append(
+            Paragraph(
+                f"Solar Output: {latest_solar:.2f} kW",
+                styles["BodyText"]
+            )
+        )
+
+        elements.append(
+            Paragraph(
+                f"Estimated CO₂ Emission: {carbon_emission:.2f} kg CO₂",
+                styles["BodyText"]
+            )
+        )
+
+        doc.build(elements)
+
+    st.subheader("📄 PDF Energy Report")
+
+    if st.button("Generate PDF Report"):
+
+        generate_pdf()
+
+        with open("energy_report.pdf", "rb") as pdf_file:
+
+            st.download_button(
+                label="Download PDF Report",
+                data=pdf_file,
+                file_name="energy_report.pdf",
+                mime="application/pdf"
+            )
+
+    
+    connection.close()
+
+
+# =========================
+# TAB 2: Upload Analysis
+# =========================
 with tab2:
+
     st.subheader("📁 Upload & AI Analysis")
 
     uploaded_file = st.file_uploader(
@@ -117,235 +301,221 @@ with tab2:
     )
 
     if uploaded_file is not None:
-        ##upload_df = pd.read_csv(uploaded_file)
 
         upload_df = pd.read_csv(
             uploaded_file,
             sep=",",
-            on_bad_lines='skip'
-            )
-        
+            on_bad_lines="skip"
+        )
+
         st.success("File uploaded successfully")
         st.dataframe(upload_df)
 
-        peak_usage = upload_df["power_usage"].max()
-        avg_usage = upload_df["power_usage"].mean()
-        lowest_battery = upload_df["battery_level"].min()
+        if not all(
+            col in upload_df.columns
+            for col in [
+                "power_usage",
+                "battery_level"
+            ]
+        ):
+            st.error(
+                "CSV must include power_usage and battery_level columns."
+            )
 
-        st.metric("⚡ Peak Usage", f"{peak_usage:.2f} kW")
-        st.metric("📈 Average Usage", f"{avg_usage:.2f} kW")
-        st.metric("🔋 Lowest Battery", f"{lowest_battery}%")
-
-        st.subheader("AI Analysis Result")
-
-        if peak_usage > 7:
-            st.error("⚠️ High energy usage detected")
-            st.write("Recommendation: Reduce non-critical loads during peak hours.")
         else:
-            st.success("✅ Energy usage is within normal range.")
 
-        if lowest_battery < 45:
-            st.warning("🔋 Battery level dropped below recommended threshold")
-            st.write("Recommendation: Improve battery charging schedule.")
+            peak_usage = upload_df["power_usage"].max()
+            avg_usage = upload_df["power_usage"].mean()
+            lowest_battery = upload_df["battery_level"].min()
 
-st_autorefresh(interval=3000, key="datarefresh")
+            st.metric(
+                "⚡ Peak Usage",
+                f"{peak_usage:.2f} kW"
+            )
 
+            st.metric(
+                "📈 Average Usage",
+                f"{avg_usage:.2f} kW"
+            )
 
-##connection = sqlite3.connect("energy_data.db")
-##connection = sqlite3.connect("../energy_data.db")
-connection = sqlite3.connect("backend/energy_data.db")
-query = """
-SELECT *
-FROM telemetry
-ORDER BY id DESC
-LIMIT 20
-"""
+            st.metric(
+                "🔋 Lowest Battery",
+                f"{lowest_battery}%"
+            )
 
-df = pd.read_sql_query(query, connection)
+            st.subheader("AI Analysis Result")
 
-latest_power = df["power_usage"].iloc[0]
-latest_battery = df["battery_level"].iloc[0]
-latest_solar = df["solar_output"].iloc[0]
+            if peak_usage > 7:
+                st.error("⚠️ High energy usage detected")
+                st.write(
+                    "Recommendation: Reduce non-critical loads during peak hours."
+                )
+            else:
+                st.success(
+                    "✅ Energy usage is within normal range."
+                )
 
-col1, col2, col3 = st.columns(3)
-
-col1.metric(
-    "⚡ Power Usage",
-    f"{latest_power:.2f} kW"
-)
-
-col2.metric(
-    "🔋 Battery Level",
-    f"{latest_battery}%"
-)
-
-col3.metric(
-    "☀️ Solar Output",
-    f"{latest_solar:.2f} kW"
-)
-
-carbon_emission = latest_power * 0.4
-
-st.subheader("🌍 Carbon Emission Analytics")
+            if lowest_battery < 45:
+                st.warning(
+                    "🔋 Battery level dropped below recommended threshold"
+                )
+                st.write(
+                    "Recommendation: Improve battery charging schedule."
+                )
 
 
-st.metric(
-    "Estimated CO₂ Emission",
-    f"{carbon_emission:.2f} kg CO₂"
-)
+# =========================
+# TAB 3: Solar ROI Calculator
+# =========================
+with tab3:
 
-st.subheader("AI Anomaly Detection")
+    st.subheader("☀️ Solar Installation ROI Calculator")
 
-latest_power = df["power_usage"].iloc[0]
-latest_battery = df["battery_level"].iloc[0]
-
-if latest_power > 7:
-    st.error(f"⚠️ High Power Usage Detected: {latest_power} kW")
-
-elif latest_battery < 45:
-    st.warning(f"🔋 Low Battery Level: {latest_battery}%")
-
-else:
-    st.success("✅ System Operating Normally")
-
-connection.close()
-
-st.subheader("Realtime Energy Telemetry")
-
-st.dataframe(df)
-
-st.subheader("Power Usage Trend")
-
-st.line_chart(df["power_usage"])
-
-st.subheader("Solar Output Trend")
-
-st.line_chart(df["solar_output"])
-
-st.subheader("Battery Level Trend")
-
-st.line_chart(df["battery_level"])
-
-st.subheader("Energy Usage Forecast")
-
-##forecast_value = df["power_usage"].tail(5).mean()
-
-##forecast_data = [forecast_value] * 10
-
-##st.line_chart(forecast_data)
-
-##st.info(f"Predicted Average Power Usage: {forecast_value:.2f} kW")
-
-st.subheader("🔮 AI Energy Forecast")
-
-power_data = df["power_usage"].values[::-1]
-
-X = np.array(range(len(power_data))).reshape(-1, 1)
-y = power_data
-
-model = LinearRegression()
-model.fit(X, y)
-
-future_x = np.array(range(len(power_data), len(power_data) + 10)).reshape(-1, 1)
-
-forecast = model.predict(future_x)
-
-st.line_chart(forecast)
-
-forecast_value = forecast[-1]
-
-st.info(f"Predicted Future Power Usage: {forecast_value:.2f} kW")
-
-##Report 
-st.subheader("📥 Export Energy Data")
-
-csv = df.to_csv(index=False).encode("utf-8")
-
-st.download_button(
-    label="Download Telemetry CSV",
-    data=csv,
-    file_name="energy_telemetry.csv",
-    mime="text/csv"
-)
-
-##Generate PDF Report
-
-def generate_pdf():
-
-    doc = SimpleDocTemplate("energy_report.pdf")
-
-    styles = getSampleStyleSheet()
-
-    elements = []
-
-    elements.append(
-        Paragraph("EnerVision AI Energy Report", styles['Title'])
+    roof_area = st.number_input(
+        "Roof area available for solar panels (sqm)",
+        min_value=1.0,
+        value=30.0
     )
 
-    elements.append(Spacer(1, 12))
-
-    elements.append(
-        Paragraph(
-            f"Latest Power Usage: {latest_power:.2f} kW",
-            styles['BodyText']
-        )
+    monthly_units = st.number_input(
+        "Monthly electricity usage (kWh)",
+        min_value=1.0,
+        value=500.0
     )
 
-    elements.append(
-        Paragraph(
-            f"Battery Level: {latest_battery}%",
-            styles['BodyText']
-        )
+    electricity_rate = st.number_input(
+        "Electricity rate (THB per kWh)",
+        min_value=1.0,
+        value=4.5
     )
 
-    elements.append(
-        Paragraph(
-            f"Solar Output: {latest_solar:.2f} kW",
-            styles['BodyText']
-        )
+    panel_watt = st.number_input(
+        "Solar panel size (Watt per panel)",
+        min_value=100,
+        value=550
     )
 
-    elements.append(
-        Paragraph(
-            f"Estimated CO₂ Emission: {carbon_emission:.2f} kg CO₂",
-            styles['BodyText']
-        )
+    panel_price = st.number_input(
+        "Estimated price per panel (THB)",
+        min_value=1000,
+        value=4500
     )
 
-    doc.build(elements)
+    installation_cost = st.number_input(
+        "Installation and equipment cost (THB)",
+        min_value=0,
+        value=80000
+    )
 
-    ##Generate PDFpip3 install reportlab
+    sun_hours = st.number_input(
+        "Average sunlight hours per day",
+        min_value=1.0,
+        value=4.5
+    )
 
-    st.subheader("📄 PDF Energy Report")
+    panel_area = 2.2
 
-if st.button("Generate PDF Report"):
+    max_panels_by_area = int(roof_area / panel_area)
 
-    generate_pdf()
+    required_kw = monthly_units / (30 * sun_hours)
 
-    with open("energy_report.pdf", "rb") as pdf_file:
+    required_panels = int(
+        (required_kw * 1000) / panel_watt
+    ) + 1
 
-        st.download_button(
-            label="Download PDF Report",
-            data=pdf_file,
-            file_name="energy_report.pdf",
-            mime="application/pdf"
+    recommended_panels = min(
+        max_panels_by_area,
+        required_panels
+    )
+
+    system_kw = (
+        recommended_panels * panel_watt
+    ) / 1000
+
+    monthly_generation = system_kw * sun_hours * 30
+
+    monthly_savings = min(
+        monthly_generation,
+        monthly_units
+    ) * electricity_rate
+
+    total_cost = (
+        recommended_panels * panel_price
+    ) + installation_cost
+
+    if monthly_savings > 0:
+        payback_years = total_cost / (
+            monthly_savings * 12
+        )
+    else:
+        payback_years = 0
+
+    ten_year_savings = monthly_savings * 12 * 10
+
+    st.subheader("📊 Solar Recommendation Summary")
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    col1.metric(
+        "Panels",
+        f"{recommended_panels}"
+    )
+
+    col2.metric(
+        "Install Cost",
+        f"{total_cost:,.0f} THB"
+    )
+
+    col3.metric(
+        "Save / Month",
+        f"{monthly_savings:,.0f} THB"
+    )
+
+    col4.metric(
+        "Payback",
+        f"{payback_years:.1f} yrs"
+    )
+
+    st.write(
+        f"🏠 Maximum panels by roof area: {max_panels_by_area} panels"
+    )
+
+    st.write(
+        f"⚡ Estimated monthly solar generation: {monthly_generation:.0f} kWh"
+    )
+
+    st.write(
+        f"💰 Estimated total installation cost: {total_cost:,.0f} THB"
+    )
+
+    st.write(
+        f"⏳ Estimated payback period: {payback_years:.1f} years"
+    )
+
+    st.write(
+        f"📈 Estimated 10-year savings: {ten_year_savings:,.0f} THB"
+    )
+
+    st.subheader("💡 Recommendation")
+
+    if recommended_panels < required_panels:
+        st.warning(
+            "Roof area may not be enough to fully cover current electricity usage."
+        )
+    else:
+        st.success(
+            "Roof area is sufficient for the estimated solar requirement."
         )
 
-##Automated Monthly Reports
-st.subheader("📅 Monthly Energy Summary")
-
-total_power = df["power_usage"].sum()
-
-average_power = df["power_usage"].mean()
-
-total_carbon = total_power * 0.4
-
-peak_usage = df["power_usage"].max()
-
-st.write(f"⚡ Total Energy Usage: {total_power:.2f} kW")
-
-st.write(f"📈 Average Power Usage: {average_power:.2f} kW")
-
-st.write(f"🔥 Peak Usage: {peak_usage:.2f} kW")
-
-st.write(f"🌍 Estimated Total CO₂: {total_carbon:.2f} kg CO₂")
+    if payback_years <= 5:
+        st.success(
+            "This installation has a strong return on investment."
+        )
+    elif payback_years <= 8:
+        st.info(
+            "This installation has a moderate payback period."
+        )
+    else:
+        st.warning(
+            "Payback period is quite long. Consider reducing system cost or reviewing electricity usage."
+        )
