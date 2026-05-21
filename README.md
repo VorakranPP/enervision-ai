@@ -1,7 +1,18 @@
 
 # ⚡ EnerVision AI
 
-AI-powered smart energy monitoring prototype for realtime telemetry, anomaly detection, forecasting, and sustainability analytics.
+## Overview
+
+EnerVision AI is an AI-powered energy monitoring and analytics platform designed for realtime telemetry processing, anomaly detection, energy forecasting, sustainability reporting, and solar investment planning.
+
+The platform combines:
+
+- Realtime MQTT telemetry
+- AI analytics
+- Secure authentication (JWT + RBAC)
+- Solar ROI estimation
+- Dashboard visualization
+- PDF/CSV reporting
 
 ---
 
@@ -56,14 +67,15 @@ AI-powered smart energy monitoring prototype for realtime telemetry, anomaly det
 | Layer | Technology |
 |---|---|
 | Frontend | Streamlit |
-| Backend | Python |
+| Backend | FastAPI |
 | Messaging | MQTT |
 | Database | SQLite |
-| Authentication | JWT + bcrypt |
+| Authentication | JWT + bcrypt + RBAC |
 | AI / ML | scikit-learn |
 | Data Processing | Pandas / NumPy |
 | Reporting | ReportLab |
 | Deployment | Docker |
+
 
 ---
 
@@ -98,7 +110,7 @@ AI-powered smart energy monitoring prototype for realtime telemetry, anomaly det
 ---
 ## 📸 Screenshots
 
-### Login
+### 📊 Realtime Dashboard
 
 ![Login](screenshots/login.png)
 
@@ -114,10 +126,26 @@ AI-powered smart energy monitoring prototype for realtime telemetry, anomaly det
 ![Upload](screenshots/Upload1.2.png)
 
 
-### Solar ROI
+### ☀️ Solar ROI Calculator
 
 ![Solar](screenshots/SolarCal1.1.png)
 ![Solar](screenshots/SolarCal1.2.png)
+
+
+## 🔄 User Workflow
+
+Login
+↓
+Realtime Dashboard
+↓
+AI Monitoring
+↓
+Forecasting
+↓
+Reports
+↓
+Solar ROI Planning
+
 
 # 🏗️ Architecture Diagram
 
@@ -369,3 +397,15 @@ Built as a portfolio and learning project focused on:
 - Secure backend systems
 - Cloud-native architecture
 - Authentication and RBAC
+
+## ⭐ Current Version
+
+EnerVision AI v2.4
+
+Latest additions:
+
+- Dashboard login/logout
+- Role-based user sessions
+- Solar ROI calculator
+- Cross-platform support
+- Improved dashboard modularity
