@@ -7,23 +7,48 @@ AI-powered smart energy monitoring prototype for realtime telemetry, anomaly det
 
 # 🚀 Features
 
-- Realtime telemetry simulation
-- MQTT-based data streaming
-- Realtime dashboard visualization
-- AI anomaly detection
-- Energy forecasting
-- Carbon emission analytics
-- Upload & AI file analysis
-- CSV export and PDF reporting
-- Docker deployment support
-- JWT authentication
-- User registration & login
-- SQLite user management
-- Password hashing with bcrypt
-- Protected API endpoints
-- Role-based access control (RBAC)
-- Admin and viewer roles
+- Realtime energy monitoring dashboard
 
+- MQTT-based telemetry streaming
+
+- AI anomaly detection
+
+- Energy forecasting analytics
+
+- Carbon emission analytics
+
+- Upload & AI file analysis
+
+- CSV export and PDF reporting
+
+- Solar ROI calculator
+  - Roof area estimation
+  - Solar panel recommendation
+  - Installation cost estimation
+  - Monthly savings prediction
+  - Payback period calculation
+  - 10-year savings estimation
+
+- Dashboard authentication
+  - Login / Logout
+  - JWT authentication
+  - Session management
+  - User profile display
+
+- User management
+  - User registration & login
+  - SQLite user database
+  - Password hashing with bcrypt
+  - Role-based access control (RBAC)
+  - Admin and viewer roles
+
+- Protected API endpoints
+
+- Cross-platform deployment
+  - MacOS
+  - Windows
+
+- Docker deployment support
 ---
 
 # 🧠 Technology Stack
@@ -42,25 +67,57 @@ AI-powered smart energy monitoring prototype for realtime telemetry, anomaly det
 
 ---
 
-# 📊 Dashboard Features
+## 📸 Dashboard Modules
 
-## 📊 Realtime Dashboard
+### 📊 Realtime Dashboard
 
-- Live telemetry monitoring
-- KPI metrics
-- Trend visualization
-- Forecast analytics
-- Carbon emission tracking
+- Realtime telemetry monitoring
+- AI anomaly detection
+- Energy forecasting
+- Carbon analytics
+- PDF & CSV reporting
 
-## 📁 Upload & AI Analysis
 
-- Upload CSV energy data
-- Analyze energy usage
-- Detect abnormal values
-- Generate AI recommendations
-- Export reports
+### 📁 Upload & AI Analysis
+
+- Upload CSV files
+- AI analysis and recommendations
+- Peak usage detection
+- Battery health analysis
+
+
+### ☀️ Solar ROI Calculator
+
+- Roof area estimation
+- Solar panel recommendation
+- Installation cost estimation
+- Monthly savings calculation
+- Payback period estimation
+- 10-year savings prediction
 
 ---
+## 📸 Screenshots
+
+### Login
+
+![Login](screenshots/login.png)
+
+
+### Dashboard
+
+![Dashboard](screenshots/dashboard1.1.png)
+![Dashboard](screenshots/dashboard1.2.png)
+
+### Upload & AI Analysis
+
+![Upload](screenshots/Upload1.1.png)
+![Upload](screenshots/Upload1.2.png)
+
+
+### Solar ROI
+
+![Solar](screenshots/solarCal1.1.png)
+![Solar](screenshots/solarCal1.2.png)
 
 # 🏗️ Architecture Diagram
 
@@ -284,26 +341,18 @@ Access Protected APIs
 | GET `/telemetry` | Telemetry |
 | GET `/health` | Health check |
 
-# 🔮 Future Roadmap
+🔮 Future Roadmap
 
-- [x] Role-based access control (RBAC)
-- [ ] Refresh tokens
-- [ ] PostgreSQL migration
-- [ ] AWS IoT Core integration
-- [ ] Cloud deployment (AWS)
-- [ ] Multi-site monitoring
-- [ ] Predictive maintenance
-- [ ] Advanced ML forecasting
-- [ ] Email alerting
-- [ ] Kubernetes deployment
-- [ ] Grafana integration
-- [ ] User profile management
-- [ ] Password reset
-- [ ] Multi-user roles
-- [ ] User profile management
-- [ ] Password reset
-- [ ] Multi-tenant access
-
+- PostgreSQL migration
+- Cloud deployment (AWS)
+- AWS IoT Core integration
+- Multi-site monitoring
+- Predictive maintenance
+- Advanced ML forecasting
+- Email alerting
+- Kubernetes deployment
+- Real solar recommendation engine
+- Dynamic role management
 
 # 👨‍💻 Author
 
@@ -311,10 +360,12 @@ Access Protected APIs
 
 Netzwerkingenieurin | Cloud & Infrastructure Enthusiast | AI & IoT Learner
 
-Built as a portfolio project focused on:
+Built as a portfolio and learning project focused on:
 
-- AI analytics
-- IoT systems
-- Secure backend architecture
-- Cloud-native applications
-- Smart energy monitoring
+- AI
+- IoT
+- Energy analytics
+- Solar planning
+- Secure backend systems
+- Cloud-native architecture
+- Authentication and RBAC
