@@ -116,8 +116,8 @@ AI-powered smart energy monitoring prototype for realtime telemetry, anomaly det
 
 ### Solar ROI
 
-![Solar](screenshots/solarCal1.1.png)
-![Solar](screenshots/solarCal1.2.png)
+![Solar](screenshots/SolarCal1.1.png)
+![Solar](screenshots/SolarCal1.2.png)
 
 # 🏗️ Architecture Diagram
 
