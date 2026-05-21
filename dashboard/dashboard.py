@@ -15,7 +15,13 @@ st.set_page_config(page_title="EnerVision AI Dashboard")
 if "token" not in st.session_state:
     st.session_state.token = None
 
+if "username" not in st.session_state:
+    st.session_state.username = None
+st.title("🔐 EnerVision dashboard Mai2026")
+if "role" not in st.session_state:
+    st.session_state.role = None
 
+##Log in 
 if st.session_state.token is None:
 
     st.title("🔐 EnerVision Login")
@@ -52,9 +58,13 @@ if st.session_state.token is None:
 
             st.session_state.token = token
 
+            st.session_state.username = username
+
+            st.session_state.role = "admin"
+
             st.success(
-                "Login successful"
-            )
+        "Login successful"
+    )
 
             st.rerun()
 
@@ -64,9 +74,32 @@ if st.session_state.token is None:
                 "Invalid credentials"
             )
 
+
     st.stop()
-    
-st.title("⚡ EnerVision AI Dashboard Mai 2026")
+
+##Logout
+
+col1, col2 = st.columns([6, 2])
+
+with col1:
+   st.markdown(
+
+f"""
+👤 {st.session_state.username}
+|
+🔐 {st.session_state.role}
+"""
+
+)
+
+with col2:
+
+    if st.button("Logout"):
+
+        st.session_state.token = None
+        st.session_state.username = None
+        st.rerun()
+        
 
 ##add Tap
 tab1, tab2 = st.tabs(["📊 Realtime Dashboard", "📁 Upload & AI Analysis"])

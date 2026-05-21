@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 import sqlite3
-import requests
 from pathlib import Path
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
