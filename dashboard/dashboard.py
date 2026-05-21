@@ -1,16 +1,71 @@
 import streamlit as st
 import sqlite3
 import pandas as pd
+import requests
+import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 from sklearn.linear_model import LinearRegression
 import numpy as np
 ##Report
-import streamlit as st
 from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 
 st.set_page_config(page_title="EnerVision AI Dashboard")
 
+if "token" not in st.session_state:
+    st.session_state.token = None
+
+
+if st.session_state.token is None:
+
+    st.title("🔐 EnerVision Login")
+
+    username = st.text_input(
+        "Username"
+    )
+
+    password = st.text_input(
+        "Password",
+        type="password"
+    )
+
+    if st.button("Login"):
+
+        response = requests.post(
+
+            "http://127.0.0.1:8000/token",
+
+            data={
+                "username":
+                username,
+
+                "password":
+                password
+            }
+        )
+
+        if response.status_code == 200:
+
+            token = response.json()[
+                "access_token"
+            ]
+
+            st.session_state.token = token
+
+            st.success(
+                "Login successful"
+            )
+
+            st.rerun()
+
+        else:
+
+            st.error(
+                "Invalid credentials"
+            )
+
+    st.stop()
+    
 st.title("⚡ EnerVision AI Dashboard Mai 2026")
 
 ##add Tap
