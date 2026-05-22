@@ -158,6 +158,22 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
         "token_type": "bearer"
     }
 
+@app.get("/me")
+def get_me(current_user: str = Depends(verify_token)):
+
+    user = get_user_from_db(current_user)
+
+    if user is None:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found"
+        )
+
+    return {
+        "username": user["username"],
+        "role": user["role"] if "role" in user.keys() else "viewer"
+    }
+
 @app.get("/telemetry")
 def get_telemetry():
     connection = sqlite3.connect(DB_PATH)

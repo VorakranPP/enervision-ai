@@ -4,8 +4,7 @@ import pandas as pd
 import requests
 from streamlit_autorefresh import st_autorefresh
 from sklearn.linear_model import LinearRegression
-import numpy as np
-
+import numpy as npd
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
@@ -50,8 +49,30 @@ if st.session_state.token is None:
 
             st.session_state.token = token
             st.session_state.username = username
-            st.session_state.role = "admin"
+            ##st.session_state.role = "admin"
+            headers = {
 
+            "Authorization":
+
+            f"Bearer {token}"
+
+            }
+
+
+            me = requests.get(
+
+            "http://127.0.0.1:8000/me",
+
+            headers=headers
+
+            )
+
+
+            st.session_state.role = (
+
+            me.json()["role"]
+
+            )
             st.success("Login successful")
 
             st.rerun()
