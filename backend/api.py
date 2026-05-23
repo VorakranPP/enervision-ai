@@ -17,21 +17,27 @@ SECRET_KEY = "enervision-secret-key"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-##oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+# ============================
+#  verify_password
+# ============================
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
 
 pwd_context = CryptContext(
     schemes=["bcrypt"],
     deprecated="auto"
 )
-
+# ============================
+#  create_access_token
+# ============================
 def create_access_token(data: dict):
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-
+# ============================
+#  verify_token
+# ============================
 def verify_token(token: str = Depends(oauth2_scheme)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -45,6 +51,9 @@ def verify_token(token: str = Depends(oauth2_scheme)):
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
+# ============================
+#  require_admin
+# ============================
 def require_admin(current_user: str = Depends(verify_token)):
 
     user = get_user_from_db(current_user)
@@ -57,10 +66,15 @@ def require_admin(current_user: str = Depends(verify_token)):
 
     return current_user
 
+# ============================
+#  verify_password
+# ============================
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
-
+# ============================
+#  get_user_from_db
+# ============================
 def get_user_from_db(username: str):
     connection = sqlite3.connect(DB_PATH)
     connection.row_factory = sqlite3.Row
@@ -77,6 +91,9 @@ def get_user_from_db(username: str):
 
     return user
 
+# ============================
+#  create_user
+# ============================
 def create_user(
     username,
     password,
@@ -103,6 +120,10 @@ def create_user(
 
     connection.commit()
     connection.close()
+
+# ============================
+#  Register
+# ============================
 
 @app.post("/register")
 def register(
@@ -132,6 +153,9 @@ def register(
         "created_by": current_user
     }
 
+# ============================
+#  Token
+# ============================
 @app.post("/token")
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
@@ -158,6 +182,66 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
         "token_type": "bearer"
     }
 
+ 
+# ============================
+#  USER - Admin Panel
+# ============================
+@app.get("/users")
+def get_users(
+
+    current_user:
+    str = Depends(
+        require_admin
+    )
+
+):
+
+    connection = sqlite3.connect(
+        DB_PATH
+    )
+
+    cursor = connection.cursor()
+
+
+    cursor.execute(
+
+        """
+        SELECT
+        username,
+        role
+
+        FROM users
+        """
+
+    )
+
+
+    users = cursor.fetchall()
+
+
+    connection.close()
+
+
+    return [
+
+        {
+
+            "username":
+            user[0],
+
+            "role":
+            user[1]
+
+        }
+
+        for user in users
+
+    ]
+
+
+# ============================
+#  vertify account
+# ============================
 @app.get("/me")
 def get_me(current_user: str = Depends(verify_token)):
 
@@ -192,6 +276,9 @@ def get_telemetry():
 
     return [dict(row) for row in rows]
 
+# ============================
+#  Summary
+# ============================
 
 @app.get("/summary")
 def get_summary(current_user: str = Depends(verify_token)):
@@ -227,6 +314,74 @@ def get_summary(current_user: str = Depends(verify_token)):
         "peak_power_usage": round(peak_power, 2),
         "lowest_battery_level": lowest_battery,
         "estimated_co2_emission": round(carbon_emission, 2)
+    }
+
+# ============================
+#  Change Role from Dashboard
+# ============================
+@app.put("/users/{username}/role")
+
+def update_role(
+
+    username: str,
+
+    role: str,
+
+    current_user:
+
+    str = Depends(
+
+        require_admin
+
+    )
+
+):
+
+
+    connection = sqlite3.connect(
+
+        DB_PATH
+
+    )
+
+
+    cursor = connection.cursor()
+
+
+    cursor.execute(
+
+        """
+
+        UPDATE users
+
+        SET role=?
+
+        WHERE username=?
+
+        """,
+
+        (
+
+            role,
+
+            username
+
+        )
+
+    )
+
+
+    connection.commit()
+
+    connection.close()
+
+
+    return {
+
+        "message":
+
+        f"{username} updated to {role}"
+
     }
 
 @app.get("/alerts")

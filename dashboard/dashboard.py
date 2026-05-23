@@ -2,11 +2,13 @@ import streamlit as st
 import sqlite3
 import pandas as pd
 import requests
+import numpy as np
 from streamlit_autorefresh import st_autorefresh
 from sklearn.linear_model import LinearRegression
 import numpy as npd
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
+
 
 
 st.set_page_config(page_title="EnerVision AI Dashboard")
@@ -101,11 +103,11 @@ with col2:
 
 st.title("🔐 EnerVision Dashboard May 2026")
 
-
-tab1, tab2, tab3 = st.tabs([
+tab1, tab2, tab3, tab4 = st.tabs([
     "📊 Realtime Dashboard",
     "📁 Upload & AI Analysis",
-    "☀️ Solar ROI Calculator"
+    "☀️ Solar ROI Calculator",
+    "👑 Admin"
 ])
 
 
@@ -539,4 +541,56 @@ with tab3:
     else:
         st.warning(
             "Payback period is quite long. Consider reducing system cost or reviewing electricity usage."
+        )
+
+# =========================
+# TAB 4: User Management
+# =========================
+
+with tab4:
+
+    st.subheader(
+        "👑 User Management"
+    )
+
+
+    headers = {
+
+        "Authorization":
+
+        f"Bearer {
+
+        st.session_state.token
+
+        }"
+
+    }
+
+
+    response = requests.get(
+
+        "http://127.0.0.1:8000/users",
+
+        headers=headers
+
+    )
+
+
+    if response.status_code == 200:
+
+        users = response.json()
+
+
+        df = pd.DataFrame(
+            users
+        )
+
+
+        st.dataframe(df)
+
+
+    else:
+
+        st.error(
+            "Admin only"
         )
