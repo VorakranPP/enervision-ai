@@ -32,35 +32,68 @@ The platform combines:
 
 - CSV export and PDF reporting
 
-- Solar ROI calculator
-  - Roof area estimation
-  - Solar panel recommendation
-  - Installation cost estimation
-  - Monthly savings prediction
-  - Payback period calculation
-  - 10-year savings estimation
 
-- Dashboard authentication
-  - Login / Logout
-  - JWT authentication
-  - Session management
-  - User profile display
+## 🔐 Authentication & User Management
 
-- User management
-  - User registration & login
-  - SQLite user database
-  - Password hashing with bcrypt
-  - Role-based access control (RBAC)
-  - Admin and viewer roles
+- JWT authentication
 
-- Protected API endpoints
+- Dashboard login/logout
 
-- Cross-platform deployment
-  - MacOS
-  - Windows
+- User registration
 
-- Docker deployment support
----
+- Password hashing with bcrypt
+
+- SQLite user management
+
+- User Profile API (`GET /me`)
+
+- Role-based access control (RBAC)
+
+- Real user role retrieval
+
+- Admin-only API protection
+
+- Dynamic role updates
+
+- Admin and viewer roles
+
+
+## ☀️ Solar ROI Calculator
+
+- Roof area estimation
+
+- Solar panel recommendation
+
+- Installation cost estimation
+
+- Monthly savings prediction
+
+- Payback period calculation
+
+- 10-year savings estimation
+
+
+## 📊 Dashboard Modules
+
+- Realtime Dashboard
+
+- Upload & AI Analysis
+
+- Solar ROI Calculator
+
+- User profile display
+
+- Role-aware access
+
+
+## 🚀 Deployment
+
+- Docker support
+
+- MacOS support
+
+- Windows support
+
 
 # 🧠 Technology Stack
 
