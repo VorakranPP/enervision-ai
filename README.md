@@ -1,4 +1,3 @@
-
 # ⚡ EnerVision AI
 
 ## Overview
@@ -19,81 +18,53 @@ The platform combines:
 # 🚀 Features
 
 - Realtime energy monitoring dashboard
-
 - MQTT-based telemetry streaming
-
 - AI anomaly detection
-
 - Energy forecasting analytics
-
 - Carbon emission analytics
-
 - Upload & AI file analysis
-
 - CSV export and PDF reporting
-
 
 ## 🔐 Authentication & User Management
 
 - JWT authentication
-
 - Dashboard login/logout
-
 - User registration
-
 - Password hashing with bcrypt
-
 - SQLite user management
-
 - User Profile API (`GET /me`)
-
 - Role-based access control (RBAC)
-
 - Real user role retrieval
-
 - Admin-only API protection
-
 - Dynamic role updates
-
 - Admin and viewer roles
-
 
 ## ☀️ Solar ROI Calculator
 
 - Roof area estimation
-
 - Solar panel recommendation
-
 - Installation cost estimation
-
 - Monthly savings prediction
-
 - Payback period calculation
-
 - 10-year savings estimation
-
 
 ## 📊 Dashboard Modules
 
 - Realtime Dashboard
-
 - Upload & AI Analysis
-
 - Solar ROI Calculator
-
 - User profile display
-
 - Role-aware access
-
+- Admin Panel
+- User role management
 
 ## 🚀 Deployment
 
 - Docker support
-
 - MacOS support
-
 - Windows support
 
+---
 
 # 🧠 Technology Stack
 
@@ -109,12 +80,11 @@ The platform combines:
 | Reporting | ReportLab |
 | Deployment | Docker |
 
-
 ---
 
-## 📸 Dashboard Modules
+# 📸 Dashboard Modules
 
-### 📊 Realtime Dashboard
+## 📊 Realtime Dashboard
 
 - Realtime telemetry monitoring
 - AI anomaly detection
@@ -122,16 +92,14 @@ The platform combines:
 - Carbon analytics
 - PDF & CSV reporting
 
-
-### 📁 Upload & AI Analysis
+## 📁 Upload & AI Analysis
 
 - Upload CSV files
 - AI analysis and recommendations
 - Peak usage detection
 - Battery health analysis
 
-
-### ☀️ Solar ROI Calculator
+## ☀️ Solar ROI Calculator
 
 - Roof area estimation
 - Solar panel recommendation
@@ -140,33 +108,41 @@ The platform combines:
 - Payback period estimation
 - 10-year savings prediction
 
----
-## 📸 Screenshots
+## 👑 Admin Panel
 
-### 📊 Realtime Dashboard
+- View users
+- Check user roles
+- Admin-only access
+- Update user roles
+
+---
+
+# 📸 Screenshots
+
+## 🔐 Login
 
 ![Login](screenshots/login.png)
 
-
-### Dashboard
+## 📊 Realtime Dashboard
 
 ![Dashboard](screenshots/dashboard1.1.png)
 ![Dashboard](screenshots/dashboard1.2.png)
 
-### Upload & AI Analysis
+## 📁 Upload & AI Analysis
 
 ![Upload](screenshots/Upload1.1.png)
 ![Upload](screenshots/Upload1.2.png)
 
-
-### ☀️ Solar ROI Calculator
+## ☀️ Solar ROI Calculator
 
 ![Solar](screenshots/SolarCal1.1.png)
 ![Solar](screenshots/SolarCal1.2.png)
 
+---
 
-## 🔄 User Workflow
+# 🔄 User Workflow
 
+```text
 Login
 ↓
 Realtime Dashboard
@@ -178,7 +154,11 @@ Forecasting
 Reports
 ↓
 Solar ROI Planning
+↓
+Admin Role Management
+```
 
+---
 
 # 🏗️ Architecture Diagram
 
@@ -191,7 +171,7 @@ Solar ROI Planning
                                ▼
                     ┌──────────────────────┐
                     │ Authentication Layer │
-                    │ JWT + bcrypt + Users │
+                    │ JWT + bcrypt + RBAC  │
                     └──────────┬───────────┘
                                │
                                ▼
@@ -221,6 +201,7 @@ Solar ROI Planning
                   └─────────────────────────┘
 ```
 
+---
 
 # 📦 Local Setup
 
@@ -243,6 +224,12 @@ pip3 install -r requirements.txt
 python3 -m streamlit run dashboard/dashboard.py
 ```
 
+## Run API
+
+```bash
+uvicorn backend.api:app --reload
+```
+
 ---
 
 # 🐳 Docker Deployment
@@ -259,22 +246,19 @@ docker build -t enervision-ai .
 docker run -p 8501:8501 enervision-ai
 ```
 
+---
+
 # 📦 Git Workflow
 
 ```bash
 git add .
-git commit -m "Add FastAPI backend"
+git commit -m "Update project"
 git push
 ```
 
 ---
+
 # 🔌 FastAPI Backend
-
-## Run API
-
-```bash
-uvicorn backend.api:app --reload
-```
 
 ## API Documentation
 
@@ -289,6 +273,9 @@ http://127.0.0.1:8000/docs
 | GET `/` | API root endpoint |
 | POST `/register` | Register new user |
 | POST `/token` | Login & generate JWT |
+| GET `/me` | Current authenticated user profile |
+| GET `/users` | List all users (admin only) |
+| PUT `/users/{username}/role` | Update user role (admin only) |
 | GET `/health` | System health check |
 | GET `/telemetry` | Latest telemetry data |
 | GET `/summary` | Energy analytics summary |
@@ -296,6 +283,8 @@ http://127.0.0.1:8000/docs
 | GET `/recommendations` | AI operational recommendations |
 | GET `/system-status` | Overall system condition |
 | GET `/trend-analysis` | Historical energy trend analysis |
+
+---
 
 # 🌐 Dashboard
 
@@ -309,40 +298,17 @@ http://localhost:8501
 
 The platform includes:
 
-* Threshold-based anomaly detection
-* Energy forecasting using Linear Regression
-* Carbon emission estimation
-* AI-generated operational recommendations
+- Threshold-based anomaly detection
+- Energy forecasting using Linear Regression
+- Carbon emission estimation
+- AI-generated operational recommendations
 
 ## Example Recommendations
 
-* Reduce HVAC usage during peak hours
-* Shift non-critical loads
-* Improve battery charging schedules
-* Optimize solar utilization
-
----
-
-# 📈 Example Use Cases
-
-* Smart Building Monitoring
-* Renewable Energy Analytics
-* Energy Consumption Optimization
-* ESG & Sustainability Reporting
-* Operational Energy Insights
-
----
-
-# 🌍 Business Value
-
-EnerVision AI helps organizations:
-
-* Monitor realtime energy usage
-* Detect abnormal consumption patterns
-* Improve operational visibility
-* Support sustainability initiatives
-* Generate AI-driven recommendations
-* Analyze historical energy trends
+- Reduce HVAC usage during peak hours
+- Shift non-critical loads
+- Improve battery charging schedules
+- Optimize solar utilization
 
 ---
 
@@ -355,7 +321,11 @@ EnerVision AI includes:
 - JWT authentication
 - bcrypt password hashing
 - SQLite user storage
+- User Profile API (`GET /me`)
 - Role-based access control (RBAC)
+- Real role retrieval from database
+- Admin-only API protection
+- Dynamic role updates
 - Protected APIs
 
 ## Authentication Flow
@@ -371,6 +341,8 @@ Login
 ↓
 Generate JWT Token
 ↓
+GET /me
+↓
 Role Verification (admin / viewer)
 ↓
 Access Protected APIs
@@ -380,7 +352,7 @@ Access Protected APIs
 
 | Role | Permissions |
 |---|---|
-| admin | Create users, access protected APIs |
+| admin | Create users, update roles, access protected APIs |
 | viewer | Read-only access |
 
 ## Protected Endpoints
@@ -392,6 +364,9 @@ Access Protected APIs
 | GET `/recommendations` | 🔒 Required |
 | GET `/system-status` | 🔒 Required |
 | GET `/trend-analysis` | 🔒 Required |
+| GET `/me` | 🔒 Required |
+| GET `/users` | 🔒 Admin only |
+| PUT `/users/{username}/role` | 🔒 Admin only |
 | POST `/register` | 🔒 Admin only |
 
 ## Public Endpoints
@@ -402,7 +377,34 @@ Access Protected APIs
 | GET `/telemetry` | Telemetry |
 | GET `/health` | Health check |
 
-🔮 Future Roadmap
+---
+
+# 📈 Example Use Cases
+
+- Smart Building Monitoring
+- Renewable Energy Analytics
+- Energy Consumption Optimization
+- ESG & Sustainability Reporting
+- Operational Energy Insights
+- Solar investment planning
+
+---
+
+# 🌍 Business Value
+
+EnerVision AI helps organizations:
+
+- Monitor realtime energy usage
+- Detect abnormal consumption patterns
+- Improve operational visibility
+- Support sustainability initiatives
+- Generate AI-driven recommendations
+- Analyze historical energy trends
+- Estimate solar installation return on investment
+
+---
+
+# 🔮 Future Roadmap
 
 - PostgreSQL migration
 - Cloud deployment (AWS)
@@ -413,13 +415,17 @@ Access Protected APIs
 - Email alerting
 - Kubernetes deployment
 - Real solar recommendation engine
-- Dynamic role management
+- UI-based role management dashboard
+- Grafana integration
+- Prometheus monitoring
+
+---
 
 # 👨‍💻 Author
 
 **Vorakran Trisilanun (PP)**
 
-Netzwerkingenieurin | Cloud & Infrastructure Enthusiast | AI & IoT Learner
+IT Manager | Network Engineer | Cloud & Infrastructure Enthusiast | AI & IoT Builder
 
 Built as a portfolio and learning project focused on:
 
@@ -431,14 +437,22 @@ Built as a portfolio and learning project focused on:
 - Cloud-native architecture
 - Authentication and RBAC
 
+---
+
 ## ⭐ Current Version
 
-EnerVision AI v2.4
+EnerVision AI v2.6
 
 Latest additions:
 
 - Dashboard login/logout
 - Role-based user sessions
 - Solar ROI calculator
+- GET /me API
+- Real role retrieval from database
+- SQLite role migration
+- RBAC (admin / viewer)
+- Admin-only endpoints
+- Dynamic role updates
 - Cross-platform support
 - Improved dashboard modularity
