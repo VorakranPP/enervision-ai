@@ -4,6 +4,7 @@ import pandas as pd
 import requests
 import numpy as np
 import yagmail
+import time
 from streamlit_autorefresh import st_autorefresh
 from sklearn.linear_model import LinearRegression
 import numpy as npd
@@ -23,6 +24,12 @@ if "username" not in st.session_state:
 if "role" not in st.session_state:
     st.session_state.role = None
 
+if "role" not in st.session_state:
+    st.session_state.role = None
+
+if "last_alert_time" not in st.session_state:
+
+    st.session_state.last_alert_time = 0
 
 # Login
 if st.session_state.token is None:
@@ -172,41 +179,33 @@ with tab1:
 
     st.subheader("AI Anomaly Detection")
 
-import streamlit as st
-import sqlite3
-import pandas as pd
-import requests
-import numpy as np
-import yagmail
+##E-mail : 
+
+def send_alert_email(subject, body):
+
+    try:
+        
+        yag = yagmail.SMTP(
+            user="xxx@gmail.com",
+            password="Your-email Password"
+        )
+
+        yag.send(
+            to="xxx@gmail.com",
+            subject=subject,
+            contents=body
+        )
+
+        return True
 
 
-def send_alert_email(
+    except Exception as e:
 
-    subject,
+        st.warning(
+            f"Email alert failed: {e}"
+        )
 
-    body
-
-):
-
-
-    yag = yagmail.SMTP(
-
-        user="vorakran.t@gmail.com",
-
-        password="lcfjscrslzcwwwej"
-
-    )
-
-
-    yag.send(
-
-        to="vorakran.t@gmail.com",
-
-        subject=subject,
-
-        contents=body
-
-    )
+        return False
 
 
 st.set_page_config(
@@ -218,34 +217,61 @@ if latest_power > 7:
     st.error(
         f"⚠️ High Power Usage Detected: {latest_power} kW"
     )
-    send_alert_email(
 
-        "⚠️ EnerVision Alert",
 
-        f"""
+    current_time = time.time()
 
-        High power usage:
 
-        {latest_power} kW
+    if current_time - st.session_state.last_alert_time > 300:
 
-        """
 
-    )
+        send_alert_email(
+
+            "⚠️ EnerVision Alert",
+
+            "High power usage: {latest_power} kW"
+
+        )
+
+
+        st.session_state.last_alert_time = current_time
+
+
+        st.success(
+
+            "📧 Alert email sent"
+
+        )
+
+
+    else:
+
+
+        st.info(
+
+            "⏳ Waiting before next email"
+
+        )
 
 
 elif latest_battery < 45:
 
+
     st.warning(
+
         f"🔋 Low Battery Level: {latest_battery}%"
+
     )
 
 
 else:
 
-    st.success(
-        "✅ System Operating Normally"
-    )
 
+    st.success(
+
+        "✅ System Operating Normally"
+
+    )
 
     st.subheader("📅 Monthly Energy Summary")
 
