@@ -186,12 +186,12 @@ def send_alert_email(subject, body):
     try:
         
         yag = yagmail.SMTP(
-            user="xxx@gmail.com",
-            password="Your-email Password"
+            user="vorakran.t@gmail.com",
+            password="deekrcnlgoproach"
         )
 
         yag.send(
-            to="xxx@gmail.com",
+            to="vorakran.t@gmail.com",
             subject=subject,
             contents=body
         )
@@ -229,7 +229,7 @@ if latest_power > 7:
 
             "⚠️ EnerVision Alert",
 
-            "High power usage: {latest_power} kW"
+           f"High power usage: {latest_power} kW"
 
         )
 
@@ -243,15 +243,15 @@ if latest_power > 7:
 
         )
 
-
-    else:
+      else:
 
 
         st.info(
 
-            "⏳ Waiting before next email"
+            "⏳ Cooldown active"
 
         )
+    
 
 
 elif latest_battery < 45:
