@@ -3,6 +3,7 @@ import sqlite3
 import pandas as pd
 import requests
 import numpy as np
+import yagmail
 from streamlit_autorefresh import st_autorefresh
 from sklearn.linear_model import LinearRegression
 import numpy as npd
@@ -171,18 +172,80 @@ with tab1:
 
     st.subheader("AI Anomaly Detection")
 
-    if latest_power > 7:
-        st.error(
-            f"⚠️ High Power Usage Detected: {latest_power} kW"
-        )
+import streamlit as st
+import sqlite3
+import pandas as pd
+import requests
+import numpy as np
+import yagmail
 
-    elif latest_battery < 45:
-        st.warning(
-            f"🔋 Low Battery Level: {latest_battery}%"
-        )
 
-    else:
-        st.success("✅ System Operating Normally")
+def send_alert_email(
+
+    subject,
+
+    body
+
+):
+
+
+    yag = yagmail.SMTP(
+
+        user="vorakran.t@gmail.com",
+
+        password="lcfjscrslzcwwwej"
+
+    )
+
+
+    yag.send(
+
+        to="vorakran.t@gmail.com",
+
+        subject=subject,
+
+        contents=body
+
+    )
+
+
+st.set_page_config(
+    page_title="EnerVision AI Dashboard"
+)    
+
+if latest_power > 7:
+
+    st.error(
+        f"⚠️ High Power Usage Detected: {latest_power} kW"
+    )
+    send_alert_email(
+
+        "⚠️ EnerVision Alert",
+
+        f"""
+
+        High power usage:
+
+        {latest_power} kW
+
+        """
+
+    )
+
+
+elif latest_battery < 45:
+
+    st.warning(
+        f"🔋 Low Battery Level: {latest_battery}%"
+    )
+
+
+else:
+
+    st.success(
+        "✅ System Operating Normally"
+    )
+
 
     st.subheader("📅 Monthly Energy Summary")
 

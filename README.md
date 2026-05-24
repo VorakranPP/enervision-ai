@@ -119,6 +119,13 @@ The platform combines:
 - Update user roles
 
 ---
+## 📧 Notifications
+
+- Email alerts for abnormal power usage
+
+- SMTP integration with Gmail
+
+- Automatic high-power warnings
 
 # 📸 Screenshots
 
@@ -428,7 +435,7 @@ EnerVision AI helps organizations:
 
 **Vorakran Trisilanun (PP)**
 
-IT Manager | Network Engineer | Cloud & Infrastructure Enthusiast | AI & IoT Builder
+Network Engineer | Cloud & Infrastructure Enthusiast | AI & IoT Builder
 
 Built as a portfolio and learning project focused on:
 
