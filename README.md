@@ -24,6 +24,7 @@ The platform combines:
 - Carbon emission analytics
 - Upload & AI file analysis
 - CSV export and PDF reporting
+- Real-time email alerts
 
 ## 🔐 Authentication & User Management
 
@@ -422,10 +423,8 @@ EnerVision AI helps organizations:
 - Multi-site monitoring
 - Predictive maintenance
 - Advanced ML forecasting
-- Email alerting
 - Kubernetes deployment
 - Real solar recommendation engine
-- UI-based role management dashboard
 - Grafana integration
 - Prometheus monitoring
 
@@ -451,9 +450,7 @@ Built as a portfolio and learning project focused on:
 
 ## ⭐ Current Version
 
-EnerVision AI v2.6
-
-Latest additions:
+EnerVision AI v2.7
 
 Latest additions:
 
@@ -471,6 +468,6 @@ Latest additions:
 
 - Dynamic role updates
 
-- Admin dashboard
+- Email alerting
 
-- User role management
+- UI-based role management dashboard
