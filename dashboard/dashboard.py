@@ -558,11 +558,7 @@ with tab4:
 
         "Authorization":
 
-        f"Bearer {
-
-        st.session_state.token
-
-        }"
+        f"Bearer {st.session_state.token}"
 
     }
 
@@ -580,17 +576,94 @@ with tab4:
 
         users = response.json()
 
-
-        df = pd.DataFrame(
-            users
-        )
-
+        df = pd.DataFrame(users)
 
         st.dataframe(df)
 
 
+        selected_user = st.selectbox(
+
+            "Select user",
+
+            df["username"]
+
+        )
+
+
+        new_role = st.selectbox(
+
+            "Select new role",
+
+            [
+
+                "viewer",
+
+                "admin"
+
+            ]
+
+        )
+
+
+        if st.button(
+
+            "Update Role"
+
+        ):
+
+
+            update_response = requests.put(
+
+                f"http://127.0.0.1:8000/users/{selected_user}/role",
+
+                params={
+
+                    "role":
+
+                    new_role
+
+                },
+
+
+                headers=headers
+
+            )
+
+
+            if update_response.status_code == 200:
+
+
+                st.success(
+
+                    f"{selected_user}"
+
+                    f" updated "
+
+                    f"to "
+
+                    f"{new_role}"
+
+                )
+
+
+                st.rerun()
+
+
+            else:
+
+
+                st.error(
+
+                    "Failed to update role"
+
+                )
+
+
     else:
 
+
         st.error(
+
             "Admin only"
+
         )

@@ -24,6 +24,9 @@ The platform combines:
 - Carbon emission analytics
 - Upload & AI file analysis
 - CSV export and PDF reporting
+- Admin dashboard
+- User role management
+- Dynamic role updates
 
 ## 🔐 Authentication & User Management
 
