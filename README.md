@@ -24,9 +24,6 @@ The platform combines:
 - Carbon emission analytics
 - Upload & AI file analysis
 - CSV export and PDF reporting
-- Admin dashboard
-- User role management
-- Dynamic role updates
 
 ## 🔐 Authentication & User Management
 
@@ -58,8 +55,11 @@ The platform combines:
 - Solar ROI Calculator
 - User profile display
 - Role-aware access
-- Admin Panel
+- Admin dashboard
 - User role management
+- Dynamic role updates
+
+
 
 ## 🚀 Deployment
 
@@ -448,14 +448,22 @@ EnerVision AI v2.6
 
 Latest additions:
 
+Latest additions:
+
 - Dashboard login/logout
+
 - Role-based user sessions
+
 - Solar ROI calculator
+
 - GET /me API
-- Real role retrieval from database
-- SQLite role migration
+
 - RBAC (admin / viewer)
+
 - Admin-only endpoints
+
 - Dynamic role updates
-- Cross-platform support
-- Improved dashboard modularity
+
+- Admin dashboard
+
+- User role management
