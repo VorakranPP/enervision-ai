@@ -383,6 +383,28 @@ def update_role(
         f"{username} updated to {role}"
 
     }
+##Delete User
+@app.delete("/users/{username}")
+def delete_user(
+    username: str,
+    current_user: str = Depends(require_admin)
+):
+
+    connection = sqlite3.connect(DB_PATH)
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "DELETE FROM users WHERE username = ?",
+        (username,)
+    )
+
+    connection.commit()
+    connection.close()
+
+    return {
+        "message": f"{username} deleted"
+    }
+
 
 @app.get("/alerts")
 def get_alerts(current_user: str = Depends(verify_token)):

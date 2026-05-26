@@ -665,60 +665,127 @@ with tab3:
 # =========================
 with tab4:
 
-    st.subheader("👑 User Management")
+    st.subheader("👑 Admin User Management")
 
     headers = {
         "Authorization": f"Bearer {st.session_state.token}"
     }
 
-    response = requests.get(
-        "http://127.0.0.1:8000/users",
-        headers=headers
-    )
+    if st.session_state.role != "admin":
 
-    if response.status_code == 200:
+        st.error("Admin only")
 
-        users = response.json()
+    else:
 
-        df = pd.DataFrame(users)
+        st.subheader("➕ Add New User")
 
-        st.dataframe(df)
-
-        selected_user = st.selectbox(
-            "Select user",
-            df["username"]
+        new_username = st.text_input("New username")
+        new_password = st.text_input(
+            "New password",
+            type="password"
         )
 
-        new_role = st.selectbox(
-            "Select new role",
-            [
-                "viewer",
-                "admin"
-            ]
+        new_user_role = st.selectbox(
+            "Role for new user",
+            ["viewer", "admin"]
         )
 
-        if st.button("Update Role"):
+        if st.button("Create User"):
 
-            update_response = requests.put(
-                f"http://127.0.0.1:8000/users/{selected_user}/role",
+            create_response = requests.post(
+                "http://127.0.0.1:8000/register",
                 params={
-                    "role": new_role
+                    "username": new_username,
+                    "password": new_password,
+                    "role": new_user_role
                 },
                 headers=headers
             )
 
-            if update_response.status_code == 200:
-
+            if create_response.status_code == 200:
                 st.success(
-                    f"{selected_user} updated to {new_role}"
+                    f"User {new_username} created successfully"
+                )
+                st.rerun()
+            else:
+                st.error(
+                    create_response.text
                 )
 
-                st.rerun()
 
-            else:
+        st.divider()
 
-                st.error("Failed to update role")
+        st.subheader("👥 Existing Users")
 
-    else:
+        response = requests.get(
+            "http://127.0.0.1:8000/users",
+            headers=headers
+        )
 
-        st.error("Admin only")
+        if response.status_code == 200:
+
+            users = response.json()
+
+            for user in users:
+
+                col1, col2, col3, col4 = st.columns(
+                    [4, 2, 2, 2]
+                )
+
+                with col1:
+                    st.write(user["username"])
+
+                with col2:
+                    selected_role = st.selectbox(
+                        "Role",
+                        ["viewer", "admin"],
+                        index=0 if user["role"] == "viewer" else 1,
+                        key=f"role_{user['username']}"
+                    )
+
+                with col3:
+                    if st.button(
+                        "Update",
+                        key=f"update_{user['username']}"
+                    ):
+
+                        update_response = requests.put(
+                            f"http://127.0.0.1:8000/users/{user['username']}/role",
+                            params={
+                                "role": selected_role
+                            },
+                            headers=headers
+                        )
+
+                        if update_response.status_code == 200:
+                            st.success(
+                                f"{user['username']} updated"
+                            )
+                            st.rerun()
+                        else:
+                            st.error("Update failed")
+
+                with col4:
+                    if user["username"] == st.session_state.username:
+                        st.caption("Current user")
+                    else:
+                        if st.button(
+                            "Delete",
+                            key=f"delete_{user['username']}"
+                        ):
+
+                            delete_response = requests.delete(
+                                f"http://127.0.0.1:8000/users/{user['username']}",
+                                headers=headers
+                            )
+
+                            if delete_response.status_code == 200:
+                                st.success(
+                                    f"{user['username']} deleted"
+                                )
+                                st.rerun()
+                            else:
+                                st.error("Delete failed")
+
+        else:
+            st.error("Unable to load users")
