@@ -391,14 +391,15 @@ Access Protected APIs
 | GET `/users` | 🔒 Admin only |
 | PUT `/users/{username}/role` | 🔒 Admin only |
 | POST `/register` | 🔒 Admin only |
+| DELETE `/users/{username}` | 🔒 Admin only |
 
 ## Public Endpoints
 
 | Endpoint | Description |
 |---|---|
-| POST `/token` | Login |
-| GET `/telemetry` | Telemetry |
-| GET `/health` | Health check |
+| POST `/token` | Login and generate JWT token |
+| GET `/health` | System health check |
+| GET `/telemetry` | Public telemetry data |Health check |
 
 ---
 
@@ -467,15 +468,9 @@ EnerVision AI v2.8
 Latest additions:
 
 - Email alerts with cooldown
-
 - Live battery gauge UI
-
 - Dynamic alert threshold
-
 - System health monitoring
-
 - Admin dashboard improvements
-
 - User create / update / delete
-
 - Role-based admin management
