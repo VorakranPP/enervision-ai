@@ -19,12 +19,12 @@ def send_alert_email(subject, body):
 
     try:
         yag = yagmail.SMTP(
-            user="YOUR_GMAIL@gmail.com",
-            password="YOUR_APP_PASSWORD"
+            user="vorakran.t@gmail.com",
+            password="deekrcnlgoproach"
         )
 
         yag.send(
-            to="YOUR_GMAIL@gmail.com",
+            to="vorakran.t@gmail.com",
             subject=subject,
             contents=body
         )
@@ -168,7 +168,28 @@ with tab1:
         "🔋 Battery Level",
         f"{latest_battery}%"
     )
+    st.subheader("🔋 Live Battery Gauge")
 
+    battery_value = int(latest_battery)
+
+    st.progress(
+          battery_value / 100
+        )
+
+    if battery_value >= 70:
+            st.success(
+        f"Battery status: Healthy ({battery_value}%)"
+            )
+
+    elif battery_value >= 45:
+            st.warning(
+            f"Battery status: Medium ({battery_value}%)"
+        )
+
+    else:
+            st.error(
+            f"Battery status: Low ({battery_value}%)"
+        )
     col3.metric(
         "☀️ Solar Output",
         f"{latest_solar:.2f} kW"
@@ -179,13 +200,48 @@ with tab1:
     st.subheader("🌍 Carbon Emission Analytics")
 
     st.metric(
-        "Estimated CO₂ Emission",
-        f"{carbon_emission:.2f} kg CO₂"
+    "Estimated CO₂ Emission",
+    f"{carbon_emission:.2f} kg CO₂" 
     )
 
+# =========================
+# System Health
+# =========================
+
+    st.subheader("🖥️ System Health")
+
+    if latest_power > 9:
+
+        st.error("🔴 Critical")
+
+
+    elif latest_battery < 45:
+
+        st.warning("🟠 Warning")
+
+
+    else:
+
+        st.success("🟢 Healthy")
+
+# =========================
+# E-mail Alert
+# =========================
+    
     st.subheader("AI Anomaly Detection")
 
-    if latest_power > 7:
+    alert_threshold = st.slider(
+
+    "⚡ Alert Threshold (kW)",
+
+    min_value=1,
+
+    max_value=20,
+
+    value=9
+
+    )
+    if latest_power > alert_threshold:
 
         st.error(
             f"⚠️ High Power Usage Detected: {latest_power} kW"
@@ -193,7 +249,7 @@ with tab1:
 
         current_time = time.time()
 
-        if current_time - st.session_state.last_alert_time > 300:
+        if current_time - st.session_state.last_alert_time > 1200:
 
             email_sent = send_alert_email(
                 "⚠️ EnerVision Alert",
@@ -238,7 +294,9 @@ with tab1:
     else:
         st.success("✅ System Operating Normally")
 
-
+# =========================
+# Summary
+# =========================
     st.subheader("📅 Monthly Energy Summary")
 
     total_power = df["power_usage"].sum()
@@ -300,7 +358,9 @@ with tab1:
         mime="text/csv"
     )
 
-
+# =========================
+# -----PDF-----
+# =========================
     def generate_pdf():
 
         doc = SimpleDocTemplate("energy_report.pdf")
