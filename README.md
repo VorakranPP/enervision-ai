@@ -25,6 +25,15 @@ The platform combines:
 - Upload & AI file analysis
 - CSV export and PDF reporting
 - Real-time email alerts
+- Dynamic alert threshold slider
+- Live battery gauge UI
+- System health monitoring
+- Email alerts with cooldown
+- Admin dashboard
+- User creation
+- User role updates
+- User deletion
+- Admin-only user management
 
 ## 🔐 Authentication & User Management
 
@@ -114,19 +123,22 @@ The platform combines:
 
 ## 👑 Admin Panel
 
-- View users
-- Check user roles
-- Admin-only access
+- View all users
+- Create new users
 - Update user roles
+- Delete users
+- Admin-only access
+- Dynamic role management
 
 ---
 ## 📧 Notifications
 
 - Email alerts for abnormal power usage
-
 - SMTP integration with Gmail
-
 - Automatic high-power warnings
+- Configurable alert threshold
+- Alert cooldown system
+- Battery alerts
 
 # 📸 Screenshots
 
@@ -450,24 +462,20 @@ Built as a portfolio and learning project focused on:
 
 ## ⭐ Current Version
 
-EnerVision AI v2.7
+EnerVision AI v2.8
 
 Latest additions:
 
-- Dashboard login/logout
+- Email alerts with cooldown
 
-- Role-based user sessions
+- Live battery gauge UI
 
-- Solar ROI calculator
+- Dynamic alert threshold
 
-- GET /me API
+- System health monitoring
 
-- RBAC (admin / viewer)
+- Admin dashboard improvements
 
-- Admin-only endpoints
+- User create / update / delete
 
-- Dynamic role updates
-
-- Email alerting
-
-- UI-based role management dashboard
+- Role-based admin management
