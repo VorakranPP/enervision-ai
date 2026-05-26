@@ -5,15 +5,36 @@ import requests
 import numpy as np
 import yagmail
 import time
+
 from streamlit_autorefresh import st_autorefresh
 from sklearn.linear_model import LinearRegression
-import numpy as npd
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
 
-
 st.set_page_config(page_title="EnerVision AI Dashboard")
+
+
+def send_alert_email(subject, body):
+
+    try:
+        yag = yagmail.SMTP(
+            user="YOUR_GMAIL@gmail.com",
+            password="YOUR_APP_PASSWORD"
+        )
+
+        yag.send(
+            to="YOUR_GMAIL@gmail.com",
+            subject=subject,
+            contents=body
+        )
+
+        return True
+
+    except Exception as e:
+        st.warning(f"Email alert failed: {e}")
+        return False
+
 
 if "token" not in st.session_state:
     st.session_state.token = None
@@ -24,12 +45,9 @@ if "username" not in st.session_state:
 if "role" not in st.session_state:
     st.session_state.role = None
 
-if "role" not in st.session_state:
-    st.session_state.role = None
-
 if "last_alert_time" not in st.session_state:
-
     st.session_state.last_alert_time = 0
+
 
 # Login
 if st.session_state.token is None:
@@ -59,32 +77,19 @@ if st.session_state.token is None:
 
             st.session_state.token = token
             st.session_state.username = username
-            ##st.session_state.role = "admin"
+
             headers = {
-
-            "Authorization":
-
-            f"Bearer {token}"
-
+                "Authorization": f"Bearer {token}"
             }
 
-
             me = requests.get(
-
-            "http://127.0.0.1:8000/me",
-
-            headers=headers
-
+                "http://127.0.0.1:8000/me",
+                headers=headers
             )
 
+            st.session_state.role = me.json()["role"]
 
-            st.session_state.role = (
-
-            me.json()["role"]
-
-            )
             st.success("Login successful")
-
             st.rerun()
 
         else:
@@ -110,6 +115,7 @@ with col2:
 
 
 st.title("🔐 EnerVision Dashboard May 2026")
+
 
 tab1, tab2, tab3, tab4 = st.tabs([
     "📊 Realtime Dashboard",
@@ -179,99 +185,59 @@ with tab1:
 
     st.subheader("AI Anomaly Detection")
 
-##E-mail : 
+    if latest_power > 7:
 
-def send_alert_email(subject, body):
-
-    try:
-        
-        yag = yagmail.SMTP(
-            user="vorakran.t@gmail.com",
-            password="deekrcnlgoproach"
+        st.error(
+            f"⚠️ High Power Usage Detected: {latest_power} kW"
         )
 
-        yag.send(
-            to="vorakran.t@gmail.com",
-            subject=subject,
-            contents=body
-        )
+        current_time = time.time()
 
-        return True
+        if current_time - st.session_state.last_alert_time > 300:
 
+            email_sent = send_alert_email(
+                "⚠️ EnerVision Alert",
+                f"High power usage: {latest_power} kW"
+            )
 
-    except Exception as e:
+            if email_sent:
+                st.session_state.last_alert_time = current_time
+                st.success("📧 Alert email sent")
+
+            else:
+                st.warning("Email alert failed")
+
+        else:
+            st.caption("⏳ Cooldown active")
+
+    elif latest_battery < 45:
 
         st.warning(
-            f"Email alert failed: {e}"
+            f"🔋 Low Battery Level: {latest_battery}%"
         )
 
-        return False
+        current_time = time.time()
 
+        if current_time - st.session_state.last_alert_time > 300:
 
-st.set_page_config(
-    page_title="EnerVision AI Dashboard"
-)    
+            email_sent = send_alert_email(
+                "🔋 EnerVision Battery Alert",
+                f"Battery level low: {latest_battery}%"
+            )
 
-if latest_power > 7:
+            if email_sent:
+                st.session_state.last_alert_time = current_time
+                st.success("📧 Battery alert sent")
 
-    st.error(
-        f"⚠️ High Power Usage Detected: {latest_power} kW"
-    )
+            else:
+                st.warning("Email alert failed")
 
+        else:
+            st.caption("⏳ Cooldown active")
 
-    current_time = time.time()
+    else:
+        st.success("✅ System Operating Normally")
 
-
-    if current_time - st.session_state.last_alert_time > 300:
-
-
-        send_alert_email(
-
-            "⚠️ EnerVision Alert",
-
-           f"High power usage: {latest_power} kW"
-
-        )
-
-
-        st.session_state.last_alert_time = current_time
-
-
-        st.success(
-
-            "📧 Alert email sent"
-
-        )
-
-      else:
-
-
-        st.info(
-
-            "⏳ Cooldown active"
-
-        )
-    
-
-
-elif latest_battery < 45:
-
-
-    st.warning(
-
-        f"🔋 Low Battery Level: {latest_battery}%"
-
-    )
-
-
-else:
-
-
-    st.success(
-
-        "✅ System Operating Normally"
-
-    )
 
     st.subheader("📅 Monthly Energy Summary")
 
@@ -334,6 +300,7 @@ else:
         mime="text/csv"
     )
 
+
     def generate_pdf():
 
         doc = SimpleDocTemplate("energy_report.pdf")
@@ -381,6 +348,7 @@ else:
 
         doc.build(elements)
 
+
     st.subheader("📄 PDF Energy Report")
 
     if st.button("Generate PDF Report"):
@@ -396,7 +364,6 @@ else:
                 mime="application/pdf"
             )
 
-    
     connection.close()
 
 
@@ -632,34 +599,22 @@ with tab3:
             "Payback period is quite long. Consider reducing system cost or reviewing electricity usage."
         )
 
+
 # =========================
 # TAB 4: User Management
 # =========================
-
 with tab4:
 
-    st.subheader(
-        "👑 User Management"
-    )
-
+    st.subheader("👑 User Management")
 
     headers = {
-
-        "Authorization":
-
-        f"Bearer {st.session_state.token}"
-
+        "Authorization": f"Bearer {st.session_state.token}"
     }
 
-
     response = requests.get(
-
         "http://127.0.0.1:8000/users",
-
         headers=headers
-
     )
-
 
     if response.status_code == 200:
 
@@ -669,90 +624,41 @@ with tab4:
 
         st.dataframe(df)
 
-
         selected_user = st.selectbox(
-
             "Select user",
-
             df["username"]
-
         )
-
 
         new_role = st.selectbox(
-
             "Select new role",
-
             [
-
                 "viewer",
-
                 "admin"
-
             ]
-
         )
 
-
-        if st.button(
-
-            "Update Role"
-
-        ):
-
+        if st.button("Update Role"):
 
             update_response = requests.put(
-
                 f"http://127.0.0.1:8000/users/{selected_user}/role",
-
                 params={
-
-                    "role":
-
-                    new_role
-
+                    "role": new_role
                 },
-
-
                 headers=headers
-
             )
-
 
             if update_response.status_code == 200:
 
-
                 st.success(
-
-                    f"{selected_user}"
-
-                    f" updated "
-
-                    f"to "
-
-                    f"{new_role}"
-
+                    f"{selected_user} updated to {new_role}"
                 )
-
 
                 st.rerun()
 
-
             else:
 
-
-                st.error(
-
-                    "Failed to update role"
-
-                )
-
+                st.error("Failed to update role")
 
     else:
 
-
-        st.error(
-
-            "Admin only"
-
-        )
+        st.error("Admin only")
