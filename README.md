@@ -69,8 +69,6 @@ The platform combines:
 - User role management
 - Dynamic role updates
 
-
-
 ## 🚀 Deployment
 
 - Docker support
@@ -431,7 +429,7 @@ EnerVision AI helps organizations:
 # 🔮 Future Roadmap
 
 - PostgreSQL migration
-- Cloud deployment (AWS)
+- Cloud deployment (AWS EC2/ECS)
 - AWS IoT Core integration
 - Multi-site monitoring
 - Predictive maintenance
@@ -440,6 +438,7 @@ EnerVision AI helps organizations:
 - Real solar recommendation engine
 - Grafana integration
 - Prometheus monitoring
+- CI/CD pipeline with GitHub Actions
 
 ---
 
