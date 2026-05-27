@@ -304,11 +304,66 @@ with tab1:
     total_carbon = total_power * 0.4
     peak_usage = df["power_usage"].max()
 
+
     st.write(f"⚡ Total Energy Usage: {total_power:.2f} kW")
     st.write(f"📈 Average Power Usage: {average_power:.2f} kW")
-    st.write(f"🔥 Peak Usage: {peak_usage:.2f} kW")
     st.write(f"🌍 Estimated Total CO₂: {total_carbon:.2f} kg CO₂")
 
+
+# ===========Peak Usage Analysi==============
+
+    st.subheader("⚡ Peak Usage Analysis")
+
+    peak_row = df.loc[
+        df["power_usage"].idxmax()
+    ]
+
+    peak_power = peak_row["power_usage"]
+
+    st.write(f"🔥 Peak Usage: {peak_usage:.2f} kW")
+
+    st.write(
+        "This is the highest power usage found in the latest telemetry data."
+    )
+
+    if peak_power > alert_threshold:
+
+        st.warning(
+            "Recommendation: Reduce non-critical loads during peak usage periods."
+        )
+
+    else:
+
+        st.success(
+            "Peak usage is within the current alert threshold."
+        )
+    
+    # ===========Cost Impact Analysis==============
+    
+    st.subheader("💰 Cost Impact Analysis")
+
+    electricity_rate = 4.5
+
+    estimated_cost = total_power * electricity_rate
+
+    reduced_peak_power = peak_usage * 0.8
+
+    estimated_saving = (peak_usage - reduced_peak_power) * electricity_rate * 30
+    col1, col2, col3 = st.columns(3)
+    
+    col1.metric(
+        "Estimated Energy Cost",
+        f"{estimated_cost:,.2f} THB"
+    )
+
+    col2.metric(
+        "Potential Saving if Peak Reduced 20%",
+        f"{estimated_saving:,.2f} THB"
+    )
+    col3.metric(
+        "Highest Power Usage",
+        f"{peak_power:.2f} kW"
+    )
 
     st.subheader("Realtime Energy Telemetry")
 
