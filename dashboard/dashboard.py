@@ -5,7 +5,8 @@ import requests
 import numpy as np
 import yagmail
 import time
-
+import plotly.graph_objects as go
+from prophet import Prophet
 from streamlit_autorefresh import st_autorefresh
 from sklearn.linear_model import LinearRegression
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
@@ -19,12 +20,12 @@ def send_alert_email(subject, body):
 
     try:
         yag = yagmail.SMTP(
-            user="vorakran.t@gmail.com",
-            password="deekrcnlgoproach"
+            user="XXXX@gmail.com",
+            password="Your Password"
         )
 
         yag.send(
-            to="vorakran.t@gmail.com",
+            to="XXXX@gmail.com",
             subject=subject,
             contents=body
         )
@@ -378,29 +379,95 @@ with tab1:
     st.subheader("Battery Level Trend")
     st.line_chart(df["battery_level"])
 
-    st.subheader("🔮 AI Energy Forecast")
+### Replaced Linear Regression with Prophet (Meta) for 48-hour energy forecasting##cat backend/mqtt_simulator.py | grep -i "sleep\|interval\|time"
 
-    power_data = df["power_usage"].values[::-1]
+    st.subheader("🔮 AI Energy Forecast (Prophet)")
 
-    X = np.array(range(len(power_data))).reshape(-1, 1)
-    y = power_data
+# ดึงข้อมูลเพิ่มขึ้น 200 แถว
+    query_forecast = """
+    SELECT timestamp, power_usage
+    FROM telemetry
+    ORDER BY id DESC
+    LIMIT 200
+    """
+    df_forecast = pd.read_sql_query(query_forecast, connection)
 
-    model = LinearRegression()
-    model.fit(X, y)
+    # เตรียมข้อมูลให้ Prophet
+    df_prophet = df_forecast.rename(columns={
+        "timestamp": "ds",
+        "power_usage": "y"
+    })
+    df_prophet["ds"] = pd.to_datetime(df_prophet["ds"])
+    df_prophet = df_prophet.sort_values("ds")
 
-    future_x = np.array(
-        range(len(power_data), len(power_data) + 10)
-    ).reshape(-1, 1)
+    if len(df_prophet) < 10:
+        st.warning("ข้อมูลยังน้อยเกินไปสำหรับ forecast")
+    else:
+        model = Prophet(
+            changepoint_prior_scale=0.05,
+            yearly_seasonality=False,
+            weekly_seasonality=True,
+            daily_seasonality=True
+        )
+        model.fit(df_prophet)
 
-    forecast = model.predict(future_x)
+    # Forecast 48 ชั่วโมงข้างหน้า
+        future = model.make_future_dataframe(
+            periods=48,
+            freq="h"
+        )
+        forecast = model.predict(future)
 
-    st.line_chart(forecast)
+    # Plot ด้วย Plotly
+        fig = go.Figure()
 
-    forecast_value = forecast[-1]
+        fig.add_trace(go.Scatter(
+            x=df_prophet["ds"],
+            y=df_prophet["y"],
+            name="Actual",
+            line=dict(color="cyan")
+        ))
 
-    st.info(
-        f"Predicted Future Power Usage: {forecast_value:.2f} kW"
-    )
+        fig.add_trace(go.Scatter(
+            x=forecast["ds"],
+            y=forecast["yhat"],
+            name="Forecast",
+            line=dict(color="orange", dash="dash")
+        ))
+
+        fig.add_trace(go.Scatter(
+            x=forecast["ds"],
+            y=forecast["yhat_upper"],
+            fill=None,
+            line=dict(color="rgba(255,165,0,0.2)"),
+            name="Upper Bound"
+        ))
+
+        fig.add_trace(go.Scatter(
+            x=forecast["ds"],
+            y=forecast["yhat_lower"],
+            fill="tonexty",
+            line=dict(color="rgba(255,165,0,0.2)"),
+            name="Lower Bound"
+        ))
+
+        fig.update_layout(
+            title="48-Hour Power Usage Forecast",
+            xaxis_title="Time",
+            yaxis_title="Power Usage (kW)",
+            template="plotly_dark"
+        )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+    next_48h = forecast[forecast["ds"] > df_prophet["ds"].max()]
+    peak_forecast = next_48h["yhat"].max()
+    avg_forecast = next_48h["yhat"].mean()
+
+    col1, col2 = st.columns(2)
+    col1.metric("📈 Peak (48h)", f"{peak_forecast:.2f} kW")
+    col2.metric("📊 Average (48h)", f"{avg_forecast:.2f} kW")
+
 
     st.subheader("📥 Export Energy Data")
 
