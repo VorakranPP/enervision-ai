@@ -111,19 +111,14 @@ def create_user(
     cursor = connection.cursor()
 
     hashed_password = pwd_context.hash(password)
-
     cursor.execute("""
-        INSERT INTO users (
-            username,
-            hashed_password,
-            role
-        )
-        VALUES (?,?,?)
-    """, (
+    INSERT INTO users (
         username,
-        hashed_password,
+        password,
         role
-    ))
+    )
+    VALUES (?,?,?)
+    """, (username, hashed_password, role))
 
     connection.commit()
     connection.close()
@@ -173,8 +168,8 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
             status_code=401,
             detail="Incorrect username or password"
         )
-
-    if not verify_password(form_data.password, user["hashed_password"]):
+    if not verify_password(form_data.password, user["password"]):
+    ##if not verify_password(form_data.password, user["hashed_password"]):
         raise HTTPException(
             status_code=401,
             detail="Incorrect username or password"

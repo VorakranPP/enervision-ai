@@ -10,13 +10,61 @@ from tabs.tab_admin import render_admin
 from tabs.tab_ev import render_ev
 
 st.set_page_config(page_title="EnerVision AI Dashboard")
-apply_login_styles()
+
 
 if "token" not in st.session_state:
     st.session_state.token = None
 
-if "username" not in st.session_state:
-    st.session_state.username = None
+# ใส่ apply_login_styles() เฉพาะตอน token เป็น None เท่านั้น
+if st.session_state.token is None:
+    apply_login_styles()
+    render_login_header()
+
+    username = st.text_input("Username", placeholder="Enter your username")
+    password = st.text_input("Password", type="password", placeholder="Enter your password")
+
+    if st.button("Sign In →"):
+
+        try:
+            response = requests.post(
+                "http://127.0.0.1:8000/token",
+                data={"username": username, "password": password},
+                timeout=5
+            )
+
+            if response.status_code == 200:
+                token = response.json()["access_token"]
+                st.session_state.token = token
+                st.session_state.username = username
+
+                me = requests.get(
+                    "http://127.0.0.1:8000/me",
+                    headers={"Authorization": f"Bearer {token}"},
+                    timeout=5
+                )
+                st.session_state.role = me.json()["role"]
+                st.success("Login successful")
+                st.rerun()
+
+            elif response.status_code == 401:
+                st.error("❌ Invalid username or password")
+
+            elif response.status_code == 500:
+                st.error("⚠️ Server error. Please contact admin.")
+
+            else:
+                st.error(f"⚠️ Unexpected error: {response.status_code}")
+
+        except requests.exceptions.ConnectionError:
+            st.error("⚠️ Cannot connect to server. Please make sure backend is running.")
+
+        except requests.exceptions.Timeout:
+            st.error("⚠️ Server timeout. Please try again.")
+
+        except Exception as e:
+            st.error(f"⚠️ Unexpected error: {e}")
+
+    st.stop()
 
 if "role" not in st.session_state:
     st.session_state.role = None

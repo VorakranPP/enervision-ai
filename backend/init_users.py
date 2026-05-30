@@ -1,0 +1,36 @@
+import sqlite3
+from passlib.context import CryptContext
+
+##DB_PATH = "backend/users.db"
+DB_PATH = "backend/energy_data.db"
+pwd_context = CryptContext(
+    schemes=["bcrypt"],
+    deprecated="auto"
+)
+
+connection = sqlite3.connect(DB_PATH)
+cursor = connection.cursor()
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE,
+    password TEXT,
+    role TEXT DEFAULT 'viewer'
+)
+""")
+
+admin_password = pwd_context.hash("admin123")
+
+cursor.execute("""
+INSERT OR REPLACE INTO users (username, password, role)
+VALUES (?, ?, ?)
+""", ("admin", admin_password, "admin"))
+
+connection.commit()
+connection.close()
+
+print("✅ users table ready")
+print("✅ admin user created")
+print("username: admin")
+print("password: admin123")

@@ -56,7 +56,7 @@ def apply_login_styles():
         background: rgba(0,168,232,0.05) !important;
         border: 1px solid rgba(0,168,232,0.15) !important;
         border-radius: 12px !important;
-        color: #F0F4F8 !important;
+        color: #FF4F8 !important;
         font-family: 'DM Sans', sans-serif !important;
     }
 
