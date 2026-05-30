@@ -9,6 +9,11 @@ fastapi
 uvicorn
 python-jose
 passlib
-bcrypt
-python-multipart
 bcrypt==4.0.1
+python-multipart
+yagmail
+prophet
+plotly
+requests
+sqlite3
+python-dotenv

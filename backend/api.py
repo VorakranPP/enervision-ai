@@ -8,12 +8,19 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
+# บนสุดของไฟล์
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 app = FastAPI(title="EnerVision AI API")
 
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "energy_data.db"
-SECRET_KEY = "enervision-secret-key"
+
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 

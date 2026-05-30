@@ -1,0 +1,68 @@
+### 📁 Root Level
+
+**`dashboard.py`** — ไฟล์หลักของทั้งโปรเจกต์ ทำหน้าที่เป็นแค่ตัว import และ layout รวม ไม่มี logic อะไรเลย ใครอ่านไฟล์นี้ก็เข้าใจโครงสร้างทั้งหมดได้ทันที
+
+**`styles.py`** — เก็บ CSS ทั้งหมดของหน้า Login ทำให้ dashboard.py ไม่รก และถ้าอยากเปลี่ยน design ก็แก้ที่นี่ที่เดียว
+
+**`alerts.py`** — ส่ง email แจ้งเตือนเมื่อค่าผิดปกติ มี cooldown กันส่ง spam
+
+**`battery.py`** — แสดง gauge กราฟิกแบตเตอรี่ แยกออกมาเพราะใช้ plotly วาดภาพพิเศษ
+
+**`forecast.py`** — Prophet ML พยากรณ์พลังงาน 48 ชั่วโมงข้างหน้า เป็น feature ที่โดดเด่นที่สุดในโปรเจกต์
+
+**`pdf_report.py`** — สร้างรายงาน PDF ให้ดาวน์โหลด ใช้ BytesIO ไม่บันทึกไฟล์ลง disk
+
+---
+
+### 📁 tabs/
+
+**`tab_realtime.py`** — แท็บหลัก แสดงข้อมูลพลังงานแบบ real-time ทุก 3 วินาที มี metrics, charts, anomaly detection, forecast และ PDF export ครบ
+
+**`tab_upload.py`** — อัปโหลด CSV แล้วให้ AI วิเคราะห์ข้อมูลพลังงานให้ทันที บอก peak usage, battery ต่ำสุด และ recommendation
+
+**`tab_solar.py`** — คำนวณ ROI การติดตั้ง solar panel ใส่ข้อมูลบ้านแล้วได้ผลเลยว่าคุ้มไหม กี่ปีคืนทุน
+
+**`tab_ev.py`** — แท็บใหม่ล่าสุด จำลอง EV Charging Network 5 สถานีในแฟรงก์เฟิร์ต ตรงกับ business ของ MOVOLT โดยตรง มีแผนที่ด้วย
+
+**`tab_admin.py`** — จัดการ user ทั้งหมด เพิ่ม ลบ เปลี่ยน role เข้าได้เฉพาะ admin เท่านั้น
+
+---
+
+### 📁 backend/
+
+**`api.py`** — FastAPI backend จัดการ authentication และ endpoints ทั้งหมด
+
+**`database.py`** — จัดการ SQLite database connection
+
+**`mqtt_subscriber.py`** — รับข้อมูล telemetry จาก MQTT broker แล้วบันทึกลง database
+
+---
+
+### 📁 Database
+
+**`energy_data.db`** — เก็บข้อมูล telemetry พลังงาน power, battery, solar
+
+**`ev_data.db`** — เก็บข้อมูล EV charging sessions และ station status
+
+---
+
+### 📄 Scripts
+
+**`seed_data.py`** — สร้างข้อมูลพลังงานจำลองย้อนหลัง 30 วัน สำหรับ Prophet
+
+**`seed_ev_data.py`** — สร้างข้อมูล EV charging จำลอง 5 สถานี 845 sessions
+
+---
+
+ภาพรวมทั้งหมดคือ **Modular Architecture** ครับ แต่ละไฟล์มีหน้าที่ชัดเจน แก้ส่วนไหนก็แก้ได้โดยไม่กระทบส่วนอื่น ซึ่งเป็นสิ่งที่บริษัทอย่าง MOVOLT มองหาใน developer ครับ 💪🇩🇪
+5 stations ดีที่สุดครับ ไม่น้อยเกินไป ไม่มากเกินไป ดู professional พอดีสำหรับ demo ครับ
+แผนที่จะทำใน EV Tab
+
+
+🚛 5 EV Charging Stations จำลองในแฟรงก์เฟิร์ต (ตรง MOVOLT เลย)
+🔋 State of Charge แต่ละคัน
+⚡ Energy delivered per session
+💰 Cost per session
+🌍 Carbon saved เทียบรถน้ำมัน
+🗺️ แผนที่ แสดง station locations
+📊 Live status — Charging / Available / Offline

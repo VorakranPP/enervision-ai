@@ -14,3 +14,11 @@ git commit
 git push
 git log --stat
 git clone
+
+## Email Alert ##
+if st.button("Test Email"):
+
+    send_alert_email(
+        "Test Alert",
+        "EnerVision email test successful"
+    )
