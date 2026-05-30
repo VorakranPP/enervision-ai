@@ -4,8 +4,7 @@
 import streamlit as st
 import pandas as pd
 
-
-def render_upload():
+def render_upload(t):
 
     st.subheader("📁 Upload & AI Analysis")
 

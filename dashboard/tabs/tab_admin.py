@@ -6,7 +6,7 @@ import streamlit as st
 import requests
 
 
-def render_admin(token, username):
+def render_admin(token, username, t):
 
     st.subheader("👑 Admin User Management")
 

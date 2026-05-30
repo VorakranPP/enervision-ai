@@ -12,7 +12,7 @@ from forecast import render_forecast
 from pdf_report import generate_pdf
 
 
-def render_realtime(token, username, role, last_alert_time):
+def render_realtime(token, username, role, last_alert_time, t):
 
     st.subheader("Realtime Energy Monitoring")
 
@@ -45,7 +45,9 @@ def render_realtime(token, username, role, last_alert_time):
     show_battery_gauge(latest_battery)
 
     # === Carbon ===
-    carbon_emission = latest_power * 0.4
+    # ✅ kWh = kW × ชั่วโมง (interval 3 วินาที = 3/3600 ชั่วโมง)
+    interval_hours = 3 / 3600
+    carbon_emission = latest_power * interval_hours * 0.4
     st.subheader("🌍 Carbon Emission Analytics")
     st.metric("Estimated CO₂ Emission", f"{carbon_emission:.2f} kg CO₂")
 
@@ -107,7 +109,7 @@ def render_realtime(token, username, role, last_alert_time):
     st.subheader("📅 Monthly Energy Summary")
     total_power = df["power_usage"].sum()
     average_power = df["power_usage"].mean()
-    total_carbon = total_power * 0.4
+    total_carbon = total_power * interval_hours * 0.4
     peak_usage = df["power_usage"].max()
 
     st.write(f"⚡ Total Energy Usage: {total_power:.2f} kW")

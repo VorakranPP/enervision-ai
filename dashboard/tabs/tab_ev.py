@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 
 
-def render_ev():
+def render_ev(t):
 
     st.subheader("🚛 EV Charging Station Monitor")
     st.caption("Frankfurt Charging Network — MOVOLT Solutions GmbH")

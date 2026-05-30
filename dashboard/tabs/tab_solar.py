@@ -4,7 +4,7 @@
 import streamlit as st
 
 
-def render_solar():
+def render_solar(t):
 
     st.subheader("☀️ Solar Installation ROI Calculator")
 
