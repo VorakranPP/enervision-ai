@@ -110,7 +110,7 @@ def render_ev():
         title="EV Charging Stations — Frankfurt"
     )
 
-    st.plotly_chart(fig_map, use_container_width=True)
+    st.plotly_chart(fig_map, width='stretch')
 
     st.divider()
 
@@ -134,7 +134,7 @@ def render_ev():
         title="Total Energy Delivered by Station"
     )
     fig_bar.update_layout(template="plotly_dark")
-    st.plotly_chart(fig_bar, use_container_width=True)
+    st.plotly_chart(fig_bar, width='stretch')
 
     # === Daily Sessions Trend ===
     st.subheader("📈 Daily Charging Sessions")
@@ -151,7 +151,7 @@ def render_ev():
     )
     fig_line.update_traces(line_color="#00A8E8")
     fig_line.update_layout(template="plotly_dark")
-    st.plotly_chart(fig_line, use_container_width=True)
+    st.plotly_chart(fig_line, width='stretch')
 
     # === SoC Distribution ===
     st.subheader("🔋 State of Charge Distribution")
@@ -167,7 +167,7 @@ def render_ev():
             color_discrete_sequence=["#FF6B6B"]
         )
         fig_soc_start.update_layout(template="plotly_dark")
-        st.plotly_chart(fig_soc_start, use_container_width=True)
+        st.plotly_chart(fig_soc_start, width='stretch')
 
     with col2:
         fig_soc_end = px.histogram(
@@ -178,7 +178,7 @@ def render_ev():
             color_discrete_sequence=["#00A8E8"]
         )
         fig_soc_end.update_layout(template="plotly_dark")
-        st.plotly_chart(fig_soc_end, use_container_width=True)
+        st.plotly_chart(fig_soc_end, width='stretch')
 
     # === Carbon Saved Chart ===
     st.subheader("🌍 Carbon Saved per Station")
@@ -195,7 +195,7 @@ def render_ev():
         color_discrete_sequence=px.colors.sequential.Greens_r
     )
     fig_carbon.update_layout(template="plotly_dark")
-    st.plotly_chart(fig_carbon, use_container_width=True)
+    st.plotly_chart(fig_carbon, width='stretch')
 
     # === Recent Sessions Table ===
     st.subheader("📋 Recent Charging Sessions")
@@ -212,6 +212,6 @@ def render_ev():
         "Cost (€)", "CO₂ Saved (kg)", "Duration (min)"
     ]
 
-    st.dataframe(recent, use_container_width=True)
+    st.dataframe(recent, width='stretch')
 
     conn.close()
