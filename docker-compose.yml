@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: enervision-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - db-data:/app/backend
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/system-status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    container_name: enervision-dashboard
+    ports:
+      - "8501:8501"
+    volumes:
+      - db-data:/app/backend
+    env_file:
+      - .env
+    environment:
+      - API_URL=http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+  simulator:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: enervision-simulator
+    volumes:
+      - db-data:/app/backend
+    env_file:
+      - .env
+    command: ["python", "simulator/energy_simulator.py"]
+    depends_on:
+      - api
+    restart: unless-stopped
+    profiles:
+      - simulator
+
+volumes:
+  db-data:

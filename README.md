@@ -1,321 +1,284 @@
 # ⚡ EnerVision AI
 
-## Overview
+**AI-powered Energy Monitoring & EV Charging Infrastructure Platform**
 
-EnerVision AI is an AI-powered energy monitoring and analytics platform designed for realtime telemetry processing, anomaly detection, energy forecasting, sustainability reporting, solar investment planning, and EV charging station monitoring.
-
-The platform combines:
-
-- Realtime MQTT telemetry
-- AI analytics (Prophet ML)
-- Secure authentication (JWT + RBAC)
-- Solar ROI estimation
-- EV Charging Station monitoring
-- Dashboard visualization
-- PDF/CSV reporting
+Built for smart energy management in industrial and EV charging environments. Combines real-time IoT telemetry, machine learning forecasting, and a multi-role web dashboard — containerized with Docker Compose for cloud-ready deployment.
 
 ---
 
-# 🚀 Features
+## Quick Start (Docker)
 
-- Realtime energy monitoring dashboard
-- MQTT-based telemetry streaming
-- AI anomaly detection
-- **48-hour energy forecasting with Prophet (Meta)**
-- Carbon emission analytics
-- Upload & AI file analysis
-- CSV export and PDF reporting
-- Real-time email alerts
-- Dynamic alert threshold slider
-- Live battery gauge UI
-- System health monitoring
-- Email alerts with cooldown
-- **EV Charging Station Monitor (Frankfurt Network)**
-- **Modern login UI with error handling**
-- Admin dashboard
-- User creation / role updates / deletion
-- Admin-only user management
-- **Modular architecture (separated tab files)**
+```bash
+git clone https://github.com/VorakranPP/enervision-ai.git
+cd enervision-ai
 
-## 🔐 Authentication & User Management
+cp .env.example .env        # configure credentials
+docker-compose up --build
+```
 
-- JWT authentication
-- Modern login UI
-- **Connection error handling**
-- Dashboard login/logout
-- User registration
-- Password hashing with bcrypt
-- SQLite user management
-- Role-based access control (RBAC)
-- Admin and viewer roles
+| Service   | URL                   |
+|-----------|-----------------------|
+| Dashboard | http://localhost:8501 |
+| API       | http://localhost:8000 |
+| API Docs  | http://localhost:8000/docs |
 
-## ☀️ Solar ROI Calculator
+| Account | Username | Password | Role |
+|---------|----------|----------|------|
+| Admin | `admin` | `admin123` | admin |
+| Demo | `demo@enervision.ai` | `Demo123!` | viewer |
 
-- Roof area estimation
-- Solar panel recommendation
+---
+
+## Architecture
+
+```
+IoT Sensors / Simulator
+        │ MQTT (paho)
+        ▼
+  HiveMQ Broker ──────────────────────────────┐
+                                              │
+                                              ▼
+                                   ┌─────────────────┐
+                                   │  MQTT Subscriber │
+                                   │  mqtt_subscriber │
+                                   └────────┬─────────┘
+                                            │
+                                            ▼
+                              ┌─────────────────────────┐
+                              │       SQLite DB          │
+                              │  telemetry + users       │
+                              │  + EV charging sessions  │
+                              └────────────┬─────────────┘
+                                           │
+                    ┌──────────────────────┤
+                    ▼                      ▼
+          ┌──────────────────┐   ┌──────────────────────┐
+          │   FastAPI (API)  │   │  AI Analytics Engine │
+          │  JWT + RBAC      │   │  Prophet ML Forecast │
+          │  /token /me      │   │  Anomaly Detection   │
+          │  /telemetry ...  │   │  Recommendations     │
+          └────────┬─────────┘   └──────────┬───────────┘
+                   │                        │
+                   └───────────┬────────────┘
+                               ▼
+                   ┌───────────────────────┐
+                   │  Streamlit Dashboard  │
+                   │  Real-time + Upload   │
+                   │  Solar + EV + Admin   │
+                   └───────────────────────┘
+```
+
+---
+
+## Features
+
+### Real-time Energy Monitoring
+- Live telemetry via MQTT (power usage, battery level, solar output)
+- Configurable alert threshold with cooldown system
+- Email alerts via Gmail SMTP for anomalies
+- System health status indicator
+
+### AI & Machine Learning
+- **48-hour energy forecasting** using Prophet (Meta)
+- AI anomaly detection (Z-score statistical model)
+- Carbon emission analytics (kg CO₂ per kWh)
+- AI-powered recommendations engine
+
+### EV Charging Station Monitor
+- 5-station Frankfurt charging network (MOVOLT)
+- Live station status: Charging / Available / Offline
+- State of Charge (SoC) tracking per session
+- Energy delivered, cost (€), and carbon saved per session
+- Interactive map (Plotly Mapbox)
+- Daily sessions trend and revenue analytics
+
+### Upload & AI Analysis
+- CSV upload with automatic column detection
+- Date range and site filtering
+- Temperature correlation analysis
+- Forecast export as CSV
+- Anomaly visualization
+
+### Solar ROI Calculator
+- Roof area and panel configuration
 - Installation cost estimation
-- Monthly savings prediction
-- Payback period calculation
-- 10-year savings estimation
+- Monthly savings and payback period calculation
+- 10-year return projection
 
-## 🚛 EV Charging Monitor *(New)*
+### Security & Access Control
+- JWT authentication (30-minute token expiry)
+- Role-based access control (Admin / Viewer)
+- Password hashing with bcrypt
+- Environment variable secrets management
 
-- 5 EV Charging Stations — Frankfurt Network
-- Live station status (Charging / Available / Offline)
-- State of Charge (SoC) tracking
-- Energy delivered per session
-- Cost per session (€)
-- Carbon saved vs petrol vehicles
-- Interactive map (Frankfurt)
-- Daily sessions trend
-- Revenue analytics
-
-## 📊 Dashboard Modules
-
-- Realtime Dashboard
-- Upload & AI Analysis
-- Solar ROI Calculator
-- **EV Charging Monitor**
-- Admin Panel
+### Reporting
+- PDF energy report generation (ReportLab)
+- CSV export for processed data and forecasts
 
 ---
 
-# 🧠 Technology Stack
+## Tech Stack
 
 | Layer | Technology |
 |---|---|
 | Frontend | Streamlit |
-| Backend | FastAPI |
-| Messaging | MQTT |
+| Backend | FastAPI + Uvicorn |
+| IoT Messaging | MQTT (paho-mqtt → HiveMQ) |
 | Database | SQLite |
-| Authentication | JWT + bcrypt + RBAC |
-| AI / ML | **Prophet (Meta) + scikit-learn** |
-| Data Processing | Pandas / NumPy |
-| Visualization | **Plotly** |
+| Authentication | JWT (python-jose) + bcrypt + RBAC |
+| AI / Forecasting | Prophet (Meta) |
+| Data Processing | Pandas, NumPy, scikit-learn |
+| Visualization | Plotly |
 | Reporting | ReportLab |
-| Deployment | Docker |
+| Containerization | Docker + Docker Compose |
+| Language | Python 3.11 |
 
 ---
 
-# 📸 Dashboard Modules
+## Project Structure
 
-## 📊 Realtime Dashboard
-
-- Realtime telemetry monitoring
-- AI anomaly detection
-- **48-hour Prophet ML forecasting**
-- Carbon analytics
-- PDF & CSV reporting
-
-## 📁 Upload & AI Analysis
-
-- Upload CSV files
-- AI analysis and recommendations
-- Peak usage detection
-- Battery health analysis
-
-## ☀️ Solar ROI Calculator
-
-- Roof area estimation
-- Solar panel recommendation
-- Installation cost estimation
-- Monthly savings calculation
-- Payback period estimation
-- 10-year savings prediction
-
-## 🚛 EV Charging Monitor *(New)*
-
-- 5 stations Frankfurt network
-- Live status monitoring
-- SoC tracking per session
-- Revenue and carbon analytics
-- Interactive map
-
-## 👑 Admin Panel
-
-- View all users
-- Create new users
-- Update user roles
-- Delete users
-- Admin-only access
+```
+enervision-ai/
+├── backend/
+│   ├── api.py                 # FastAPI — all endpoints
+│   ├── database.py            # SQLite schema initialization
+│   ├── mqtt_subscriber.py     # MQTT → SQLite listener
+│   └── energy_data.db         # Main database
+│
+├── dashboard/
+│   ├── dashboard.py           # Streamlit entry point
+│   ├── db_paths.py            # Centralized DB path constants
+│   ├── translations.py        # DE / EN language pack
+│   ├── forecast.py            # Prophet forecasting component
+│   ├── alerts.py              # Email alert system
+│   ├── battery.py             # Battery gauge UI
+│   ├── pdf_report.py          # PDF report generation
+│   ├── styles.py              # Login page CSS
+│   └── tabs/
+│       ├── tab_realtime.py    # Real-time energy dashboard
+│       ├── tab_upload.py      # CSV upload + AI analysis
+│       ├── tab_solar.py       # Solar ROI calculator
+│       ├── tab_ev.py          # EV charging monitor
+│       └── tab_admin.py       # User management (admin)
+│
+├── simulator/
+│   └── energy_simulator.py    # MQTT sensor simulator
+│
+├── docker-compose.yml
+├── Dockerfile.api
+├── Dockerfile.dashboard
+├── requirements.txt
+└── .env.example
+```
 
 ---
 
-## 📧 Notifications
+## API Endpoints
 
-- Email alerts for abnormal power usage
-- SMTP integration with Gmail
-- Configurable alert threshold
-- Alert cooldown system
-- Battery alerts
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| POST | `/token` | Login — returns JWT | Public |
+| GET | `/me` | Current user profile | JWT |
+| GET | `/telemetry` | Latest 20 telemetry records | JWT |
+| GET | `/summary` | Energy analytics summary | JWT |
+| GET | `/alerts` | Active system alerts | JWT |
+| GET | `/recommendations` | AI recommendations | JWT |
+| GET | `/system-status` | Health check | Public |
+| GET | `/trend-analysis` | Historical trend data | JWT |
+| GET | `/users` | List all users | Admin |
+| POST | `/register` | Create new user | Admin |
+| PUT | `/users/{username}/role` | Update user role | Admin |
+| DELETE | `/users/{username}` | Delete user | Admin |
+
+Full interactive docs: `http://localhost:8000/docs`
 
 ---
 
-# 📸 Screenshots
+## Local Setup (without Docker)
 
-## 🔐 Login
+```bash
+# Install dependencies
+pip install -r requirements.txt
 
+# Initialize database and admin user
+python backend/init_users.py
+
+# Seed sample data
+python seed_data.py
+python seed_ev_data.py
+
+# Start API
+uvicorn backend.api:app --reload
+
+# Start Dashboard (separate terminal)
+streamlit run dashboard/dashboard.py
+```
+
+---
+
+## Docker Compose Services
+
+| Service | Description | Port |
+|---------|-------------|------|
+| `api` | FastAPI backend | 8000 |
+| `dashboard` | Streamlit frontend | 8501 |
+| `simulator` | MQTT sensor simulator (optional) | — |
+
+Run with simulator:
+```bash
+docker-compose --profile simulator up --build
+```
+
+---
+
+## Environment Variables
+
+```env
+GMAIL_USER=your_email@gmail.com
+GMAIL_PASSWORD=your_gmail_app_password
+SECRET_KEY=your-strong-secret-key
+API_URL=http://127.0.0.1:8000        # http://api:8000 in Docker
+```
+
+---
+
+## Screenshots
+
+### Login
 ![Login](screenshots/login.png)
 
-## 📊 Realtime Dashboard
-
+### Real-time Dashboard
 ![Dashboard](screenshots/dashboard1.1.png)
 ![Dashboard](screenshots/dashboard1.2.png)
 
-## 📁 Upload & AI Analysis
-
+### Upload & AI Analysis
 ![Upload](screenshots/Upload1.1.png)
 ![Upload](screenshots/Upload1.2.png)
 
-## ☀️ Solar ROI Calculator
-
+### Solar ROI Calculator
 ![Solar](screenshots/SolarCal1.1.png)
 ![Solar](screenshots/SolarCal1.2.png)
 
 ---
 
-# 🏗️ Architecture Diagram
+## Roadmap
 
-```text
-                    ┌──────────────────────┐
-                    │     User / Client    │
-                    └──────────┬───────────┘
-                               │
-                               │ Login / JWT
-                               ▼
-                    ┌──────────────────────┐
-                    │ Authentication Layer │
-                    │ JWT + bcrypt + RBAC  │
-                    └──────────┬───────────┘
-                               │
-                               ▼
-                    ┌──────────────────────┐
-                    │     FastAPI API      │
-                    │ Protected Endpoints  │
-                    └──────────┬───────────┘
-                               │
-         ┌─────────────────────┴─────────────────────┐
-         │                                           │
-         ▼                                           ▼
-┌──────────────────────┐                ┌──────────────────────┐
-│      SQLite DB       │                │   MQTT Telemetry     │
-│ Users + Energy Data  │                │  Energy Simulator    │
-│ + EV Charging Data   │                └──────────┬───────────┘
-└──────────┬───────────┘                           │
-           └─────────────────┬─────────────────────┘
-                             ▼
-                  ┌─────────────────────────┐
-                  │ AI Analytics Engine     │
-                  │ Prophet ML + Alerts     │
-                  └──────────┬──────────────┘
-                             ▼
-                  ┌─────────────────────────┐
-                  │ Streamlit Dashboard     │
-                  │ Energy + EV Monitoring  │
-                  └─────────────────────────┘
-```
+- [ ] PostgreSQL migration (replace SQLite for production)
+- [ ] Google / Facebook OAuth login
+- [ ] AWS IoT Core integration (replace HiveMQ)
+- [ ] CI/CD pipeline with GitHub Actions
+- [ ] Kubernetes deployment (Helm chart)
+- [ ] Grafana dashboard integration
+- [ ] Multi-site energy monitoring
+- [ ] Predictive maintenance alerts
 
 ---
 
-# 📦 Local Setup
+## Author
 
-## Clone Repository
-
-```bash
-git clone https://github.com/VorakranPP/enervision-ai.git
-cd enervision-ai
-```
-
-## Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-## Seed Data
-
-```bash
-# Energy data (30 days)
-python seed_data.py
-
-# EV charging data (5 stations)
-python seed_ev_data.py
-```
-
-## Run Dashboard
-
-```bash
-streamlit run dashboard/dashboard.py
-```
-
-## Run API
-
-```bash
-uvicorn backend.api:app --reload
-```
+**Vorakran Trisilanun**
+Network Engineer | Cloud & Infrastructure | AI & IoT
 
 ---
 
-# 🐳 Docker Deployment
-
-```bash
-docker build -t enervision-ai .
-docker run -p 8000:8000 -p 8501:8501 enervision-ai
-```
-
----
-
-# 🔌 FastAPI Endpoints
-
-| Endpoint | Description |
-|---|---|
-| POST `/token` | Login & generate JWT |
-| GET `/me` | Current user profile |
-| GET `/users` | List all users (admin only) |
-| PUT `/users/{username}/role` | Update user role (admin only) |
-| DELETE `/users/{username}` | Delete user (admin only) |
-| POST `/register` | Register new user (admin only) |
-| GET `/telemetry` | Latest telemetry data |
-| GET `/summary` | Energy analytics summary |
-| GET `/alerts` | Active system alerts |
-| GET `/recommendations` | AI recommendations |
-| GET `/system-status` | System health |
-| GET `/trend-analysis` | Historical trend |
-
----
-
-# 🔮 Future Roadmap
-
-- PostgreSQL migration
-- Cloud deployment (AWS EC2/ECS)
-- AWS IoT Core integration
-- Multi-site monitoring
-- Predictive maintenance
-- Kubernetes deployment
-- Grafana integration
-- CI/CD pipeline with GitHub Actions
-- German multilingual dashboard 🇩🇪
-
----
-
-# 👨‍💻 Author
-
-**Vorakran Trisilanun (PP)**
-
-Network Engineer | Cloud & Infrastructure Enthusiast | AI & IoT Builder
-
----
-
-## ⭐ Current Version
-
-EnerVision AI v3.0
-
-Latest additions:
-
-- 🚛 EV Charging Station Monitor (Frankfurt Network)
-- 🔮 Prophet ML 48-hour energy forecasting
-- 🎨 Modern login UI with animated background
-- ⚠️ Error handling & connection error messages
-- 🏗️ Modular architecture (separated tab files)
-- 🔐 Environment variables (.env) for security
-- 🐳 Docker multi-service deployment
+*EnerVision AI v3.1 — Docker Compose release*

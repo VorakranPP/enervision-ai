@@ -15,5 +15,4 @@ yagmail
 prophet
 plotly
 requests
-sqlite3
 python-dotenv

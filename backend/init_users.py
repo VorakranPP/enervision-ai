@@ -1,8 +1,8 @@
 import sqlite3
+from pathlib import Path
 from passlib.context import CryptContext
 
-##DB_PATH = "backend/users.db"
-DB_PATH = "backend/energy_data.db"
+DB_PATH = Path(__file__).resolve().parent / "energy_data.db"
 pwd_context = CryptContext(
     schemes=["bcrypt"],
     deprecated="auto"
@@ -27,10 +27,16 @@ INSERT OR REPLACE INTO users (username, password, role)
 VALUES (?, ?, ?)
 """, ("admin", admin_password, "admin"))
 
+demo_password = pwd_context.hash("Demo123!")
+
+cursor.execute("""
+INSERT OR REPLACE INTO users (username, password, role)
+VALUES (?, ?, ?)
+""", ("demo@enervision.ai", demo_password, "viewer"))
+
 connection.commit()
 connection.close()
 
 print("✅ users table ready")
-print("✅ admin user created")
-print("username: admin")
-print("password: admin123")
+print("✅ admin user created    — admin / admin123")
+print("✅ demo account created  — demo@enervision.ai / Demo123!")

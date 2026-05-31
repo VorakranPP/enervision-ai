@@ -13,7 +13,7 @@ def save_to_database(data):
     BASE_DIR = Path(__file__).resolve().parent
     DB_PATH = BASE_DIR / "energy_data.db"
 
-    connection = sqlite3.connect("backend/energy_data.db")
+    connection = sqlite3.connect(str(DB_PATH))
     cursor = connection.cursor()
 
     cursor.execute("""

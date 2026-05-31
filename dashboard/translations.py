@@ -72,6 +72,32 @@ TRANSLATIONS = {
         "normal_energy": "✅ Energieverbrauch im Normalbereich.",
         "low_battery_warning": "🔋 Batteriestand unter empfohlenem Schwellenwert",
         "low_battery_rec": "Empfehlung: Verbessern Sie den Ladeplan der Batterie.",
+        "upload_no_file": "📎 Keine Datei — Laden Sie die Vorlage unten herunter",
+        "upload_template_btn": "📥 CSV-Vorlage herunterladen",
+        "upload_summary": "📊 Zusammenfassung",
+        "upload_carbon": "🌍 CO₂- und Kostenanalyse",
+        "upload_power_trend": "📈 Stromverbrauch Trend",
+        "upload_solar_compare": "☀️ Solarleistung vs Stromverbrauch",
+        "upload_battery_trend": "🔋 Batteriestand Trend",
+        "upload_anomaly_title": "🤖 KI-Anomalieerkennung",
+        "upload_anomalies": "⚠️ Anomalien erkannt",
+        "upload_threshold": "📏 Schwellenwert",
+        "upload_anomaly_found": "⚠️ Anomalien gefunden",
+        "upload_no_anomaly": "✅ Keine Anomalien gefunden",
+        "upload_forecast_title": "🔮 KI-Prognose (Prophet)",
+        "upload_forecast_need": "Timestamp-Spalte und mindestens 10 Zeilen erforderlich",
+        "upload_spinner": "🔮 Prognose wird erstellt...",
+        "upload_rec_title": "💡 KI-Empfehlungen",
+        "upload_rec_high_peak": "⚠️ Hoher Spitzenverbrauch — unkritische Lasten reduzieren",
+        "upload_rec_high_avg": "📈 Hoher Durchschnittsverbrauch — Geräte prüfen",
+        "upload_rec_low_battery": "🔋 Batteriestand sehr niedrig — Ladeplan anpassen",
+        "upload_rec_low_avg_battery": "🔋 Durchschnittlicher Batteriestand niedrig — Solar-Kapazität erhöhen",
+        "upload_rec_low_solar": "☀️ Niedrige Solarleistung — Panels prüfen",
+        "upload_rec_anomaly": "🚨 Viele Anomalien — weitere Untersuchung empfohlen",
+        "upload_rec_ok": "✅ System arbeitet normal",
+        "upload_export": "📥 Analyse exportieren",
+        "upload_export_btn": "📥 Verarbeitete Daten herunterladen",
+        "upload_total_rows": "Gesamtzeilen",
 
         # Tab 3
         "solar_title": "☀️ Solar-Investitionsrechner",
@@ -127,7 +153,8 @@ TRANSLATIONS = {
         "login_invalid": "❌ Ungültiger Benutzername oder Passwort",
         "login_connection_error": "⚠️ Keine Verbindung zum Server möglich.",
         "login_timeout": "⚠️ Server-Timeout. Bitte versuchen Sie es erneut.",
-    },  
+        "login_server_error": "⚠️ Serverfehler. Bitte versuchen Sie es erneut.",
+    },
     
     "EN": {
         # App
@@ -198,7 +225,33 @@ TRANSLATIONS = {
         "normal_energy": "✅ Energy usage is within normal range.",
         "low_battery_warning": "🔋 Battery level dropped below recommended threshold",
         "low_battery_rec": "Recommendation: Improve battery charging schedule.",
-
+        "upload_no_file": "📎 No file yet — download the template below",
+        "upload_template_btn": "📥 Download CSV Template",
+        "upload_summary": "📊 Summary",
+        "upload_carbon": "🌍 Carbon & Cost Analysis",
+        "upload_power_trend": "📈 Power Usage Trend",
+        "upload_solar_compare": "☀️ Solar Output vs Power Usage",
+        "upload_battery_trend": "🔋 Battery Level Trend",
+        "upload_anomaly_title": "🤖 AI Anomaly Detection",
+        "upload_anomalies": "⚠️ Anomalies Detected",
+        "upload_threshold": "📏 Threshold",
+        "upload_anomaly_found": "⚠️ Anomalies found",
+        "upload_no_anomaly": "✅ No anomalies found",
+        "upload_forecast_title": "🔮 AI Forecast (Prophet)",
+        "upload_forecast_need": "Requires timestamp column and at least 10 rows",
+        "upload_spinner": "🔮 Generating forecast...",
+        "upload_rec_title": "💡 AI Recommendations",
+        "upload_rec_high_peak": "⚠️ High peak usage — reduce non-critical loads",
+        "upload_rec_high_avg": "📈 High average usage — check continuous devices",
+        "upload_rec_low_battery": "🔋 Battery very low — adjust charging schedule",
+        "upload_rec_low_avg_battery": "🔋 Average battery low — increase solar capacity",
+        "upload_rec_low_solar": "☀️ Low solar output — check panels for shading",
+        "upload_rec_anomaly": "🚨 Many anomalies — further investigation needed",
+        "upload_rec_ok": "✅ System operating normally",
+        "upload_export": "📥 Export Analysis",
+        "upload_export_btn": "📥 Download Processed Data",
+        "upload_total_rows": "Total rows",
+            
         # Tab 3
         "solar_title": "☀️ Solar Installation ROI Calculator",
         "roof_area": "Roof area available (sqm)",
@@ -230,6 +283,7 @@ TRANSLATIONS = {
         "ev_sessions": "🔌 Total Sessions",
         "ev_status": "🔌 Station Status",
         "ev_map": "🗺️ Station Map — Frankfurt",
+        
 
         # Tab 5 - Admin
         "admin_title": "👑 User Management",
@@ -251,5 +305,6 @@ TRANSLATIONS = {
         "login_invalid": "❌ Invalid username or password",
         "login_connection_error": "⚠️ Cannot connect to server.",
         "login_timeout": "⚠️ Server timeout. Please try again.",
+        "login_server_error": "⚠️ Server error. Please try again.",
     }
 }

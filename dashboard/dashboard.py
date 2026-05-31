@@ -1,7 +1,10 @@
+import os
 import streamlit as st
 import requests
 from styles import apply_login_styles, render_login_header
 from translations import TRANSLATIONS
+
+API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
 
 ##Separate File##
 from tabs.tab_realtime import render_realtime
@@ -45,7 +48,7 @@ if st.session_state.token is None:
 
         try:
             response = requests.post(
-                "http://127.0.0.1:8000/token",
+                f"{API_URL}/token",
                 data={"username": username, "password": password},
                 timeout=5
             )
@@ -56,7 +59,7 @@ if st.session_state.token is None:
                 st.session_state.username = username
 
                 me = requests.get(
-                    "http://127.0.0.1:8000/me",
+                    f"{API_URL}/me",
                     headers={"Authorization": f"Bearer {token}"},
                     timeout=5
                 )
@@ -129,4 +132,5 @@ with tab5:
     render_admin(
         st.session_state.token,
         st.session_state.username,
-        t)
+        t
+    )

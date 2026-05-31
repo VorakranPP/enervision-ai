@@ -7,14 +7,17 @@ import sqlite3
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
+from db_paths import DB_EV
 
 
 def render_ev(t):
 
-    st.subheader("🚛 EV Charging Station Monitor")
-    st.caption("Frankfurt Charging Network — MOVOLT Solutions GmbH")
+    st.subheader(t["ev_title"])
+    st.caption(t["ev_caption"])
+   
 
-    conn = sqlite3.connect("backend/ev_data.db")
+   
+    conn = sqlite3.connect(DB_EV)
 
     # === Load Data ===
     stations_df = pd.read_sql_query(
@@ -31,23 +34,24 @@ def render_ev(t):
     sessions_df["timestamp"] = pd.to_datetime(sessions_df["timestamp"])
 
     # === Summary Metrics ===
-    st.subheader("📊 Network Overview")
-
+    ##st.subheader("📊 Network Overview")
+    st.subheader(t["ev_overview"])
     total_energy = sessions_df["energy_delivered_kwh"].sum()
     total_cost = sessions_df["cost_eur"].sum()
     total_carbon = sessions_df["carbon_saved_kg"].sum()
     total_sessions = len(sessions_df)
 
     col1, col2, col3, col4 = st.columns(4)
-    col1.metric("⚡ Total Energy", f"{total_energy:,.0f} kWh")
-    col2.metric("💰 Total Revenue", f"€{total_cost:,.0f}")
-    col3.metric("🌍 CO₂ Saved", f"{total_carbon:,.0f} kg")
-    col4.metric("🔌 Total Sessions", f"{total_sessions:,}")
+    col1.metric(t["ev_total_energy"], f"{total_energy:,.0f} kWh")
+    col2.metric(t["ev_revenue"], f"€{total_cost:,.0f}")
+    col3.metric(t["ev_carbon"], f"{total_carbon:,.0f} kg")
+    col4.metric(t["ev_sessions"], f"{total_sessions:,}")
 
     st.divider()
 
     # === Station Status ===
-    st.subheader("🔌 Station Status")
+    st.subheader(t["ev_status"])
+    ##st.subheader("🔌 Station Status")
 
     for _, station in stations_df.iterrows():
 
@@ -83,7 +87,9 @@ def render_ev(t):
     st.divider()
 
     # === Map ===
-    st.subheader("🗺️ Station Map — Frankfurt")
+    # ... โค้ดเดิม ...
+    st.subheader(t["ev_map"])
+    ##st.subheader("🗺️ Station Map — Frankfurt")
 
     color_map = {
         "Charging": "green",
@@ -137,6 +143,7 @@ def render_ev(t):
     st.plotly_chart(fig_bar, width='stretch')
 
     # === Daily Sessions Trend ===
+    
     st.subheader("📈 Daily Charging Sessions")
 
     sessions_df["date"] = sessions_df["timestamp"].dt.date
