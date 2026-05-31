@@ -47,10 +47,9 @@ def render_realtime(token, username, role, last_alert_time, t):
     show_battery_gauge(latest_battery)
 
     # === Carbon ===
-    interval_hours = 3 / 3600
-    carbon_emission = latest_power * interval_hours * 0.4
+    carbon_emission = latest_power * 1 * 0.4  # kW × 1hr × 0.4 kg/kWh
     st.subheader(t["carbon_title"])
-    st.metric(t["carbon_metric"], f"{carbon_emission:.4f} kg CO₂")
+    st.metric(t["carbon_metric"], f"{carbon_emission:.2f} kg CO₂/hr")
 
     # === System Health ===
     st.subheader(t["health_title"])
@@ -111,12 +110,12 @@ def render_realtime(token, username, role, last_alert_time, t):
     st.subheader(t["monthly_title"])
     total_power = df["power_usage"].sum()
     average_power = df["power_usage"].mean()
-    total_carbon = total_power * interval_hours * 0.4
+    total_carbon = average_power * 0.4  # kg CO₂/hr based on average kW
     peak_usage = df["power_usage"].max()
 
     st.write(f"{t['total_energy']}: {total_power:.2f} kWh")
     st.write(f"{t['avg_power']}: {average_power:.2f} kW")
-    st.write(f"{t['total_carbon']}: {total_carbon:.4f} kg CO₂")
+    st.write(f"{t['total_carbon']}: {total_carbon:.2f} kg CO₂/hr")
 
     fig_monthly = px.bar(
         df,
