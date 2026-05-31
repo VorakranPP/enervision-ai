@@ -1,6 +1,5 @@
-
 # tab_admin.py
-# Admin User Management - Tab 4
+# Admin User Management - Tab 5
 
 import streamlit as st
 import requests
@@ -8,24 +7,22 @@ import requests
 
 def render_admin(token, username, t):
 
-    st.subheader("👑 Admin User Management")
+    st.subheader(t["admin_title"])
 
-    headers = {
-        "Authorization": f"Bearer {token}"
-    }
+    headers = {"Authorization": f"Bearer {token}"}
 
     if st.session_state.role != "admin":
-        st.error("Admin only")
+        st.error(t["admin_only"])
         return
 
     # === Add New User ===
-    st.subheader("➕ Add New User")
+    st.subheader(t["add_user"])
 
-    new_username = st.text_input("New username")
-    new_password = st.text_input("New password", type="password")
-    new_user_role = st.selectbox("Role for new user", ["viewer", "admin"])
+    new_username = st.text_input(t["new_username"], key="admin_new_username")
+    new_password = st.text_input(t["new_password"], type="password", key="admin_new_password")
+    new_user_role = st.selectbox(t["new_role"], ["viewer", "admin"])
 
-    if st.button("Create User"):
+    if st.button(t["create_user"]):
 
         create_response = requests.post(
             "http://127.0.0.1:8000/register",
@@ -46,7 +43,7 @@ def render_admin(token, username, t):
     st.divider()
 
     # === Existing Users ===
-    st.subheader("👥 Existing Users")
+    st.subheader(t["existing_users"])
 
     response = requests.get(
         "http://127.0.0.1:8000/users",
@@ -75,14 +72,12 @@ def render_admin(token, username, t):
             )
 
         with col3:
-            if st.button("Update", key=f"update_{user['username']}"):
-
+            if st.button(t["update"], key=f"update_{user['username']}"):
                 update_response = requests.put(
                     f"http://127.0.0.1:8000/users/{user['username']}/role",
                     params={"role": selected_role},
                     headers=headers
                 )
-
                 if update_response.status_code == 200:
                     st.success(f"{user['username']} updated")
                     st.rerun()
@@ -91,18 +86,15 @@ def render_admin(token, username, t):
 
         with col4:
             if user["username"] == username:
-                st.caption("Current user")
+                st.caption(t["current_user"])
             else:
-                if st.button("Delete", key=f"delete_{user['username']}"):
-
+                if st.button(t["delete"], key=f"delete_{user['username']}"):
                     delete_response = requests.delete(
                         f"http://127.0.0.1:8000/users/{user['username']}",
                         headers=headers
                     )
-
                     if delete_response.status_code == 200:
                         st.success(f"{user['username']} deleted")
                         st.rerun()
                     else:
                         st.error("Delete failed")
-                        

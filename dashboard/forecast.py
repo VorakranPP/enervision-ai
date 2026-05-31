@@ -6,9 +6,10 @@ import pandas as pd
 import plotly.graph_objects as go
 from prophet import Prophet
 
-def render_forecast(connection):
 
-    st.subheader("🔮 AI Energy Forecast (Prophet)")
+def render_forecast(connection, t):
+
+    st.subheader(t["forecast_title"])
 
     try:
         query_forecast = """
@@ -30,7 +31,6 @@ def render_forecast(connection):
             st.warning("ข้อมูลยังน้อยเกินไปสำหรับ forecast")
             return
 
-        # ✅ เพิ่ม spinner ตรงนี้
         with st.spinner("🔮 Generating 48-hour forecast..."):
 
             model = Prophet(
@@ -44,7 +44,6 @@ def render_forecast(connection):
             future = model.make_future_dataframe(periods=48, freq="h")
             forecast = model.predict(future)
 
-        # แสดงผลหลัง spinner เสร็จ
         fig = go.Figure()
 
         fig.add_trace(go.Scatter(
@@ -91,8 +90,8 @@ def render_forecast(connection):
         avg_forecast = next_48h["yhat"].mean()
 
         col1, col2 = st.columns(2)
-        col1.metric("📈 Peak (48h)", f"{peak_forecast:.2f} kW")
-        col2.metric("📊 Average (48h)", f"{avg_forecast:.2f} kW")
+        col1.metric(t["forecast_peak"], f"{peak_forecast:.2f} kW")
+        col2.metric(t["forecast_avg"], f"{avg_forecast:.2f} kW")
 
     except Exception as e:
         st.error(f"⚠️ Forecast error: {e}")

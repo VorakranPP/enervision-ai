@@ -1,5 +1,11 @@
 # ⚡ EnerVision AI
 
+![CI Pipeline](https://github.com/VorakranPP/enervision-ai/actions/workflows/ci.yml/badge.svg)
+![Deploy](https://github.com/VorakranPP/enervision-ai/actions/workflows/deploy.yml/badge.svg)
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688)
+
 **AI-powered Energy Monitoring & EV Charging Infrastructure Platform**
 
 Built for smart energy management in industrial and EV charging environments. Combines real-time IoT telemetry, machine learning forecasting, and a multi-role web dashboard — containerized with Docker Compose for cloud-ready deployment.
@@ -266,7 +272,11 @@ API_URL=http://127.0.0.1:8000        # http://api:8000 in Docker
 - [ ] PostgreSQL migration (replace SQLite for production)
 - [ ] Google / Facebook OAuth login
 - [ ] AWS IoT Core integration (replace HiveMQ)
-- [ ] CI/CD pipeline with GitHub Actions
+- [x] CI/CD pipeline with GitHub Actions
+- [x] Docker Hub automated image push
+- [ ] Live cloud deployment (Railway / Render)
+- [ ] PostgreSQL migration (replace SQLite)
+- [ ] Terraform infrastructure (AWS VPC + EC2)
 - [ ] Kubernetes deployment (Helm chart)
 - [ ] Grafana dashboard integration
 - [ ] Multi-site energy monitoring
@@ -281,4 +291,4 @@ Network Engineer | Cloud & Infrastructure | AI & IoT
 
 ---
 
-*EnerVision AI v3.1 — Docker Compose release*
+*EnerVision AI v3.2 — CI/CD + Docker Hub release*

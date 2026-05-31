@@ -6,49 +6,15 @@ import streamlit as st
 
 def render_solar(t):
 
-    st.subheader("☀️ Solar Installation ROI Calculator")
+    st.subheader(t["solar_title"])
 
-    roof_area = st.number_input(
-        "Roof area available for solar panels (sqm)",
-        min_value=1.0,
-        value=30.0
-    )
-
-    monthly_units = st.number_input(
-        "Monthly electricity usage (kWh)",
-        min_value=1.0,
-        value=500.0
-    )
-
-    electricity_rate = st.number_input(
-        "Electricity rate (THB per kWh)",
-        min_value=1.0,
-        value=4.5
-    )
-
-    panel_watt = st.number_input(
-        "Solar panel size (Watt per panel)",
-        min_value=100,
-        value=550
-    )
-
-    panel_price = st.number_input(
-        "Estimated price per panel (THB)",
-        min_value=1000,
-        value=4500
-    )
-
-    installation_cost = st.number_input(
-        "Installation and equipment cost (THB)",
-        min_value=0,
-        value=80000
-    )
-
-    sun_hours = st.number_input(
-        "Average sunlight hours per day",
-        min_value=1.0,
-        value=4.5
-    )
+    roof_area = st.number_input(t["roof_area"], min_value=1.0, value=30.0, key="solar_roof_area")
+    monthly_units = st.number_input(t["monthly_units"], min_value=1.0, value=500.0, key="solar_monthly_units")
+    electricity_rate = st.number_input(t["electricity_rate"], min_value=1.0, value=4.5, key="solar_electricity_rate")
+    panel_watt = st.number_input(t["panel_watt"], min_value=100, value=550, key="solar_panel_watt")
+    panel_price = st.number_input(t["panel_price"], min_value=1000, value=4500, key="solar_panel_price")
+    installation_cost = st.number_input(t["installation_cost"], min_value=0, value=80000, key="solar_installation_cost")
+    sun_hours = st.number_input(t["sun_hours"], min_value=1.0, value=4.5, key="solar_sun_hours")
 
     panel_area = 2.2
     max_panels_by_area = int(roof_area / panel_area)
@@ -67,36 +33,30 @@ def render_solar(t):
 
     ten_year_savings = monthly_savings * 12 * 10
 
-    st.subheader("📊 Solar Recommendation Summary")
+    st.subheader(t["summary_title"])
 
     col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Panels", f"{recommended_panels}")
-    col2.metric("Install Cost", f"{total_cost:,.0f} THB")
-    col3.metric("Save / Month", f"{monthly_savings:,.0f} THB")
-    col4.metric("Payback", f"{payback_years:.1f} yrs")
+    col1.metric(t["panels"], f"{recommended_panels}")
+    col2.metric(t["install_cost"], f"{total_cost:,.0f}")
+    col3.metric(t["save_month"], f"{monthly_savings:,.0f}")
+    col4.metric(t["payback"], f"{payback_years:.1f} yrs")
 
-    st.write(f"🏠 Maximum panels by roof area: {max_panels_by_area} panels")
-    st.write(f"⚡ Estimated monthly solar generation: {monthly_generation:.0f} kWh")
-    st.write(f"💰 Estimated total installation cost: {total_cost:,.0f} THB")
-    st.write(f"⏳ Estimated payback period: {payback_years:.1f} years")
-    st.write(f"📈 Estimated 10-year savings: {ten_year_savings:,.0f} THB")
+    st.write(f"🏠 {t['roof_area']}: {max_panels_by_area} panels")
+    st.write(f"⚡ {t['monthly_units']}: {monthly_generation:.0f} kWh")
+    st.write(f"💰 {t['install_cost']}: {total_cost:,.0f}")
+    st.write(f"⏳ {t['payback']}: {payback_years:.1f} years")
+    st.write(f"📈 10-year savings: {ten_year_savings:,.0f}")
 
-    st.subheader("💡 Recommendation")
+    st.subheader(t["recommendation"])
 
     if recommended_panels < required_panels:
-        st.warning(
-            "Roof area may not be enough to fully cover current electricity usage."
-        )
+        st.warning(t["roof_warning"])
     else:
-        st.success(
-            "Roof area is sufficient for the estimated solar requirement."
-        )
+        st.success(t["roof_ok"])
 
     if payback_years <= 5:
-        st.success("This installation has a strong return on investment.")
+        st.success(t["roi_strong"])
     elif payback_years <= 8:
-        st.info("This installation has a moderate payback period.")
+        st.info(t["roi_moderate"])
     else:
-        st.warning(
-            "Payback period is quite long. Consider reducing system cost or reviewing electricity usage."
-        )
+        st.warning(t["roi_long"])
