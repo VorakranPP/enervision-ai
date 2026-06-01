@@ -1,9 +1,11 @@
 # styles.py
-# EnerVision UI Styles — Login Page CSS
+# CSS styling สำหรับ login page — inject ผ่าน st.markdown unsafe_allow_html
 
 import streamlit as st
 
 
+# inject CSS ทั้งหมดสำหรับ login page: background grid, card, input, button
+# ใช้ font Syne (heading) + DM Sans (body) จาก Google Fonts
 def apply_login_styles():
     st.markdown("""
     <style>
@@ -75,12 +77,13 @@ def apply_login_styles():
         transform: translateY(-1px) !important;
         box-shadow: 0 8px 24px rgba(0,168,232,0.35) !important;
     }
-            
 
     </style>
     """, unsafe_allow_html=True)
 
 
+# แสดง header ของ login page: icon ⚡, ชื่อ EnerVision, subtitle จาก translation
+# รับ t = translation dict เพื่อแสดง subtitle ในภาษาที่เลือก
 def render_login_header(t):
     st.markdown(f"""
     <div style='text-align:center; margin-bottom: 8px;'>

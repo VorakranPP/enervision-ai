@@ -1,3 +1,7 @@
+# energy_simulator.py
+# จำลอง IoT sensor — publish telemetry ปลอมผ่าน MQTT ทุก 2 วินาที
+# ใช้สำหรับ dev/demo โดยไม่มี hardware จริง — รันด้วย docker-compose --profile simulator
+
 import time
 import random
 import json

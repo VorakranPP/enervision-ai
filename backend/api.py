@@ -24,27 +24,23 @@ DB_PATH = BASE_DIR / "energy_data.db"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-# ============================
-#  verify_password
-# ============================
+# ตั้งค่า OAuth2 token scheme (อ่าน Bearer token จาก header) และ bcrypt hashing context
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
 
 pwd_context = CryptContext(
     schemes=["bcrypt"],
     deprecated="auto"
 )
-# ============================
-#  create_access_token
-# ============================
+# สร้าง JWT access token จาก dict ข้อมูล (เช่น {"sub": username})
+# กำหนดอายุ 30 นาที เซ็นด้วย SECRET_KEY — คืนค่า token string
 def create_access_token(data: dict):
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-# ============================
-#  verify_token
-# ============================
+# ถอดรหัส JWT token จาก Authorization header — ดึง username (sub) ออกมา
+# ถ้า token ผิดหรือหมดอายุ → raise HTTP 401 | ใช้เป็น Depends() ใน protected endpoints
 def verify_token(token: str = Depends(oauth2_scheme)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -58,9 +54,8 @@ def verify_token(token: str = Depends(oauth2_scheme)):
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-# ============================
-#  require_admin
-# ============================
+# Dependency สำหรับ endpoint ที่ต้องการสิทธิ์ admin เท่านั้น
+# ตรวจ role จาก database — ถ้าไม่ใช่ admin → raise HTTP 403
 def require_admin(current_user: str = Depends(verify_token)):
 
     user = get_user_from_db(current_user)
@@ -73,15 +68,12 @@ def require_admin(current_user: str = Depends(verify_token)):
 
     return current_user
 
-# ============================
-#  verify_password
-# ============================
+# เปรียบเทียบ plaintext password กับ bcrypt hash ใน database — ใช้ passlib verify
+# คืนค่า True ถ้าตรงกัน, False ถ้าไม่ตรง
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
-# ============================
-#  get_user_from_db
-# ============================
+# ค้นหา user จาก database ด้วย username — คืนค่า Row object (dict-like) หรือ None ถ้าไม่พบ
 def get_user_from_db(username: str):
     connection = sqlite3.connect(DB_PATH)
     connection.row_factory = sqlite3.Row
@@ -98,9 +90,8 @@ def get_user_from_db(username: str):
 
     return user
 
-# ============================
-#  create_user
-# ============================
+# สร้าง user ใหม่ใน database — hash password ด้วย bcrypt ก่อน INSERT เสมอ
+# ฟังก์ชัน internal เรียกจาก /register endpoint เท่านั้น
 def create_user(
     username,
     password,
@@ -123,10 +114,8 @@ def create_user(
     connection.commit()
     connection.close()
 
-# ============================
-#  Register
-# ============================
-
+# POST /register — สร้าง user ใหม่ (admin เท่านั้น)
+# ตรวจ username ซ้ำก่อน → ถ้าซ้ำ raise HTTP 400
 @app.post("/register")
 def register(
     username: str,
@@ -155,9 +144,8 @@ def register(
         "created_by": current_user
     }
 
-# ============================
-#  Token
-# ============================
+# POST /token — ตรวจสอบ username/password แล้วคืน JWT access token
+# รับข้อมูลเป็น form data (OAuth2PasswordRequestForm) ไม่ใช่ JSON
 @app.post("/token")
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
@@ -185,9 +173,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
     }
 
  
-# ============================
-#  USER - Admin Panel
-# ============================
+# GET /users — ดึงรายชื่อ user ทั้งหมด (admin เท่านั้น) คืน list of {username, role}
 @app.get("/users")
 def get_users(
 
@@ -241,9 +227,7 @@ def get_users(
     ]
 
 
-# ============================
-#  vertify account
-# ============================
+# GET /me — ดึงข้อมูล profile ของ user ที่ login อยู่ (อ่าน username จาก JWT)
 @app.get("/me")
 def get_me(current_user: str = Depends(verify_token)):
 
@@ -260,6 +244,7 @@ def get_me(current_user: str = Depends(verify_token)):
         "role": user["role"] if "role" in user.keys() else "viewer"
     }
 
+# GET /telemetry — ดึงข้อมูล IoT telemetry ล่าสุด 20 รายการ เรียงใหม่ไปเก่า
 @app.get("/telemetry")
 def get_telemetry():
     connection = sqlite3.connect(DB_PATH)
@@ -278,10 +263,8 @@ def get_telemetry():
 
     return [dict(row) for row in rows]
 
-# ============================
-#  Summary
-# ============================
-
+# GET /summary — คำนวณสรุปพลังงานจาก telemetry ทั้งหมด: avg/peak power, lowest battery
+# CO₂ = average_power × 0.4 kg/kWh (ค่ากริดไฟฟ้าเฉลี่ย)
 @app.get("/summary")
 def get_summary(current_user: str = Depends(verify_token)):
     connection = sqlite3.connect(DB_PATH)
@@ -318,9 +301,8 @@ def get_summary(current_user: str = Depends(verify_token)):
         "estimated_co2_emission": round(carbon_emission, 2)
     }
 
-# ============================
-#  Change Role from Dashboard
-# ============================
+# PUT /users/{username}/role — เปลี่ยน role ของ user (admin เท่านั้น)
+# role รับค่า: 'admin' หรือ 'viewer'
 @app.put("/users/{username}/role")
 
 def update_role(
@@ -385,7 +367,8 @@ def update_role(
         f"{username} updated to {role}"
 
     }
-##Delete User
+# DELETE /users/{username} — ลบ user จาก database (admin เท่านั้น)
+# ป้องกันลบตัวเองจาก dashboard UI (ไม่ได้ block ที่ API level)
 @app.delete("/users/{username}")
 def delete_user(
     username: str,
@@ -408,6 +391,8 @@ def delete_user(
     }
 
 
+# GET /alerts — ตรวจสอบ telemetry 20 รายการล่าสุด สร้าง alert list
+# เงื่อนไข: power_usage > 7 kW, battery_level < 30%, solar_output < 1 kW
 @app.get("/alerts")
 def get_alerts(current_user: str = Depends(verify_token)):
     connection = sqlite3.connect(DB_PATH)
@@ -454,6 +439,8 @@ def get_alerts(current_user: str = Depends(verify_token)):
         "alerts": alerts
     }
 
+# GET /recommendations — สร้างคำแนะนำ AI จาก telemetry ล่าสุด 20 รายการ
+# dedup ด้วย set() เพื่อไม่ให้คำแนะนำซ้ำกัน
 @app.get("/recommendations")
 def get_recommendations(current_user: str = Depends(verify_token)):
 
@@ -497,6 +484,8 @@ def get_recommendations(current_user: str = Depends(verify_token)):
         "recommendations": recommendations
     }
 
+# GET /system-status — ตรวจสถานะระบบจาก telemetry ล่าสุด 1 รายการ
+# คืน: healthy / warning / critical — ใช้เป็น Docker healthcheck ด้วย
 @app.get("/system-status")
 def get_system_status(current_user: str = Depends(verify_token)):
 
@@ -538,6 +527,8 @@ def get_system_status(current_user: str = Depends(verify_token)):
         "latest_solar_output": row["solar_output"]
     }
 
+# GET /trend-analysis — วิเคราะห์แนวโน้ม 50 รายการแรก
+# เปรียบเทียบ power_usage แรกสุด vs ล่าสุด → increasing / decreasing / stable
 @app.get("/trend-analysis")
 def trend_analysis(current_user: str = Depends(verify_token)):
 

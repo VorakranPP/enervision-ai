@@ -1,3 +1,7 @@
+# database.py
+# สร้างตาราง telemetry ใน energy_data.db — รันครั้งเดียวตอน setup
+# หลังรันแล้ว table จะอยู่ถาวร (CREATE TABLE IF NOT EXISTS)
+
 import sqlite3
 from pathlib import Path
 

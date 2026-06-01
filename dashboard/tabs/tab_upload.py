@@ -9,6 +9,9 @@ import plotly.graph_objects as go
 from prophet import Prophet
 
 
+# แสดง Tab 2: CSV upload + AI analysis แบบครบวงจร
+# รวม: summary metrics, carbon/cost, trend charts, temperature correlation,
+#       Z-score anomaly detection, Prophet 48h forecast, AI recommendations, CSV export
 def render_upload(t):
 
     st.subheader(t["upload_title"])

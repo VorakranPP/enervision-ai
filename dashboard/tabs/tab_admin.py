@@ -5,6 +5,9 @@ import streamlit as st
 import requests
 
 
+# แสดง Tab 5: user management — เฉพาะ role admin เท่านั้น
+# รองรับ: สร้าง user ใหม่, เปลี่ยน role, ลบ user (ยกเว้นลบตัวเอง)
+# ทุก action เรียก API โดยตรงด้วย JWT token
 def render_admin(token, username, t):
 
     st.subheader(t["admin_title"])

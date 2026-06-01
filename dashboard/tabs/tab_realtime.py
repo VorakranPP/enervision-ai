@@ -15,6 +15,9 @@ from pdf_report import generate_pdf
 from db_paths import DB_ENERGY
 
 
+# แสดง Tab 1: real-time energy monitoring — ดึงข้อมูลจาก SQLite โดยตรง
+# รวม: metrics, battery gauge, carbon, anomaly detection, email alert, Prophet forecast, PDF
+# email alert มี cooldown: power alert 20 นาที, battery alert 5 นาที
 def render_realtime(token, username, role, last_alert_time, t):
 
     st.subheader(t["realtime_title"])

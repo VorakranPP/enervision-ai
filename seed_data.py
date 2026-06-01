@@ -1,4 +1,7 @@
 # seed_data.py
+# ใส่ข้อมูลตัวอย่างลง energy_data.db — จำลอง telemetry ย้อนหลัง 30 วัน (ทุก 10 นาที)
+# pattern กลางวันใช้ไฟมาก + solar ขึ้นตาม sin curve — รันครั้งเดียวตอน setup
+
 import sqlite3
 import numpy as np
 from datetime import datetime, timedelta

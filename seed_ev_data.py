@@ -1,5 +1,6 @@
 # seed_ev_data.py
-# จำลองข้อมูล EV Charging Stations ในแฟรงก์เฟิร์ต
+# สร้างตาราง stations + charging_sessions ใน ev_data.db
+# ใส่ข้อมูล 5 สถานี Frankfurt และ sessions ย้อนหลัง 30 วัน — รันครั้งเดียวตอน setup
 
 import sqlite3
 import numpy as np

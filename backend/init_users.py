@@ -1,3 +1,7 @@
+# init_users.py
+# สร้างตาราง users และ default accounts (admin + demo) — รันครั้งเดียวตอน setup
+# admin: admin/admin123  |  demo: demo@enervision.ai/Demo123!
+
 import sqlite3
 from pathlib import Path
 from passlib.context import CryptContext

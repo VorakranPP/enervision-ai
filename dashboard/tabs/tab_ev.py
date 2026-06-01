@@ -10,6 +10,9 @@ import plotly.express as px
 from db_paths import DB_EV
 
 
+# แสดง Tab 4: EV Charging Station Monitor สำหรับ 5 สถานี Frankfurt (MOVOLT)
+# ดึงข้อมูลจาก ev_data.db โดยตรง (ไม่ผ่าน API) — แสดง: overview metrics,
+# station status, Plotly map, daily sessions trend, revenue analytics
 def render_ev(t):
 
     st.subheader(t["ev_title"])
