@@ -204,11 +204,12 @@ def render_solar(t):
             key="solar_installation_cost",
             help=t.get("solar_install_help", "German average: €1,000–1,500 per kWp"),
         )
+        
         sun_hours = st.number_input(
             t["sun_hours"], min_value=1.0,
             value=CITY_SUN_HOURS["Frankfurt am Main"],
             step=0.1, format="%.1f",
-            key="solar_sun_hours",
+            key="solar_sun_hours_input",  # ← เปลี่ยน key ใหม่
             help=t.get("solar_sun_help", "Frankfurt 3.2h | Munich 3.8h | Hamburg 2.9h"),
         )
 

@@ -1,7 +1,25 @@
 # CLAUDE.md — EnerVision AI
-
+# EnerVision AI — Development Guidelines
 > โหลดไฟล์นี้ทุกครั้งก่อนเริ่มทำงาน ข้อมูลครอบคลุมทุกสิ่งที่ต้องรู้ ไม่ต้อง explore ไฟล์ซ้ำ
 
+
+## My Learning Style
+- Always explain WHAT you're doing and WHY before writing code
+- Add comments to every function explaining its purpose
+- When fixing bugs, explain the root cause first
+- Use simple language, I'm learning Python and Cloud
+
+## Code Standards
+- Follow existing modular structure (tabs/ folder)
+- Always use translation keys t["key"] not hardcoded text
+- Add key= argument to all Streamlit widgets
+- Use type hints where possible
+
+## Before Every Change
+1. Explain what the problem is
+2. Show the plan
+3. Write the code
+4. Summarize what was learned
 ---
 
 ## 1. PROJECT IDENTITY
